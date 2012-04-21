@@ -4,11 +4,11 @@ LIBNAME  = dbccpp
 
 TARGET   = lib/lib$(LIBNAME).a
 
-DEBUG    =
+OPTIMIZE = -O2 # or -g when debugging
 COMPILER = clang++
 
 CXX      = $(COMPILER)
-CXXFLAGS = -pipe -O2 $(DEBUG) -fPIC -Wall -Wextra -Werror -D_REENTRANT
+CXXFLAGS = -pipe $(OPTIMIZE) -fPIC -Wall -Wextra -Werror -D_REENTRANT
 INCPATH  = -Iinclude
 
 TEST        = dbccpp-test
@@ -18,7 +18,7 @@ TESTINCPATH = $(INCPATH) -I$(TESTCPPDIR)/include
 
 LINK     = $(COMPILER)
 LFLAGS   = -Wl,-O1
-LIBS     =  -lsqlite3 -Llib -l$(LIBNAME) -L$(TESTCPPDIR)/lib -ltestcpp
+LIBS     = -Llib -l$(LIBNAME) -L$(TESTCPPDIR)/lib -ltestcpp -lsqlite3 
 
 AR       = ar cqs
 
@@ -43,9 +43,7 @@ obj/%.o: src/%.cpp
 $(TARGET): $(OBJS)
 	mkdir -p lib
 	rm -f $@
-	ar x /usr/lib/libsqlite3.a
-	$(AR) $@ $(OBJS) sqlite3.o
-	rm -f sqlite3.o
+	$(AR) $@ $(OBJS)
 
 test/obj/%.o: test/src/%.cpp
 	mkdir -p test/obj

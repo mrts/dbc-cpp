@@ -40,20 +40,24 @@ public:
      *
      * When a call to the next method returns false, the cursor is positioned
      * after the last row. Any invocation of a ResultSet method which requires
-     * a current row will result in a SQLException being thrown.
+     * a current row will result in a SqlError being thrown.
      */
     virtual bool next() = 0;
 
     /** Retrieves the value of the designated column in the current row of
-     * this ResultSet object as a String in the Java programming language. */
+     * this ResultSet object. */
+    template <typename T>
+    T get(int columnIndex);
+
+    template <typename T>
+    void get(int columnIndex, T& out);
+
+protected:
+    // NVI for get()
+    virtual void getString(int columnIndex, std::string& out) = 0;
     virtual int getInt(int columnIndex) = 0;
     virtual double getDouble(int columnIndex) = 0;
-    virtual void getString(int columnIndex, std::string& out) = 0;
-
-    /** Releases this ResultSet object's resources immediately instead of
-     * waiting for this to happen when it is automatically closed.
-     */
-    virtual void close() = 0;
+    virtual bool getBool(int columnIndex) = 0;
 };
 
 }

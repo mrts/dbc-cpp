@@ -26,8 +26,7 @@ SQLitePreparedStatement::SQLitePreparedStatement(const std::string& sql,
         SQLiteConnection& db) :
     PreparedStatement(),
     _db(db),
-    _statement(NULL),
-    _num_params(-1)
+    _statement(NULL)
 {
     const char* tail_unused;
 
@@ -45,63 +44,14 @@ SQLitePreparedStatement::SQLitePreparedStatement(const std::string& sql,
         throw SQLiteSqlError(_db, "sqlite3_prepare_v2() failed", sql);
 
     _statement.reset(statement);
-    // FIXME: check what happens when invalid index is used instead
-    // if suboptimal error, check _num_params throughout
-    // if good error, don't bother tracking this
-    _num_params = sqlite3_bind_parameter_count(_statement.get());
 }
 
 ResultSet::ptr SQLitePreparedStatement::executeQuery()
 {
-    // return ResultSet::ptr(new SQLiteResultSet(*this));
-    return ResultSet::ptr(new SQLiteResultSet);
+    return ResultSet::ptr(new SQLiteResultSet(*this));
 }
 
-/*
- * int sqlite3stmt::parameterCount()
-{
-        return sqlite3_bind_parameter_count(_pStmt);
-}
-string sqlite3stmt::parameterName(int iParam)
-{
-        return sqlite3_bind_parameter_name(_pStmt, iParam);
-}
-int sqlite3stmt::parameterIndex(const string& paramName)
-{
-        return sqlite3_bind_parameter_index(_pStmt, paramName.c_str());
-}
-int sqlite3stmt::columnCount()
-{
-        return sqlite3_column_count(_pStmt);
-}
-string sqlite3stmt::columnName(int iCol)
-{
-        return sqlite3_column_name(_pStmt, iCol);
-}
-string sqlite3stmt::columnDecltype(int iCol)
-{
-        return sqlite3_column_decltype(_pStmt, iCol);
-}
-int sqlite3stmt::dataCount()
-{
-        return sqlite3_data_count(_pStmt);
-}
-
-int sqlite3stmt::columnIndex(const string& colname)
-{
-        int n = columnCount();
-        for (int i = 0; i < n; i++)
-        {
-                if (colname == columnName(i))
-                {
-                        return i;
-                }
-        }
-        return -1;
-}
-*/
-
-CountProxy& SQLitePreparedStatement::executeUpdate()
+const CountProxy& SQLitePreparedStatement::executeUpdate()
 {
     static SQLiteCountProxy count(_db.handle());
 
@@ -132,20 +82,9 @@ void SQLitePreparedStatement::clear()
 
 void SQLitePreparedStatement::reset()
 {
-    // TODO: we have experienced SQLITE_BUSY errors here.
-    // sqlite3_busy_timeout() should be used for fixing these, see below
-    // throw SQLiteDbError(_db.handle(), "sqlite3_reset(): database locked,
-    // use transactions");
-
-    /*
-     * http://code.google.com/p/sqlite-manager/issues/detail?id=399
-     *
-     * sqlite3_busy_timeout(sqlite3* dbhandle, int ms); allows sqlite3_step()
-     * to do retries up to allocated max time. Since SQLite works to minimize
-     * the amount of time that EXCLUSIVE locks are held for the writing
-     * external process reading process (sqlite-manager) will manage to
-     * acquire the SHARED lock for the reading and will avoid the failure.
-    */
+    // We have experienced SQLITE_BUSY errors here indicating that the
+    // database is locked because of another ongoing operation. Increasing
+    // sqlite3_busy_timeout() and/or using transactions should fix this.
 
     int ret = sqlite3_reset(_statement.get());
     if (ret != SQLITE_OK)
@@ -162,29 +101,29 @@ const char* SQLitePreparedStatement::getSQL() const
     return sqlite3_sql(_statement.get());
 }
 
-void SQLitePreparedStatement::set(int index, int value)
+void SQLitePreparedStatement::setInt(int index, const int& value)
 {
     int ret = sqlite3_bind_int(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
 }
 
-void SQLitePreparedStatement::set(int index, bool value)
+void SQLitePreparedStatement::setBool(int index, const bool& value)
 {
-    // FIXME: check _num_params throughout
     int ret = sqlite3_bind_int(_statement.get(), index, value ? 1 : 0);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
 }
 
-void SQLitePreparedStatement::set(int index, double value)
+void SQLitePreparedStatement::setDouble(int index, const double& value)
 {
     int ret = sqlite3_bind_double(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_double", value);
 }
 
-void SQLitePreparedStatement::set(int index, const std::string& value)
+void SQLitePreparedStatement::setString(int index, const std::string& value)
 {
-    // note that SQLITE_TRANSIENT makes copy of the data,
-    // this may be expensive
+    // Note that SQLITE_TRANSIENT makes copy of the data.
+    // This may be expensive if it is large.
+
     int ret = sqlite3_bind_text(_statement.get(), index,
             value.c_str(), -1, SQLITE_TRANSIENT);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_text",

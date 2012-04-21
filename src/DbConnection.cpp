@@ -38,6 +38,8 @@ DbConnection& DbConnection::instance()
             throw DbErrorBase("connect() has to be called before instance()");
 
         instance = DbConnectionFactory::instance().createDbConnection(_driver, _params);
+        if (!instance)
+            throw DbErrorBase("Null instance returned from driver factory");
     }
 
     return *instance;

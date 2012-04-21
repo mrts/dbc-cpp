@@ -1,27 +1,49 @@
 obj/DbConnection.o: src/DbConnection.cpp include/dbccpp/DbConnection.h \
   include/dbccpp/PreparedStatement.h include/dbccpp/ResultSet.h \
   include/utilcpp/declarations.h include/dbccpp/DbExceptions.h \
-  src/DbConnectionFactory.h include/utilcpp/scoped_ptr.h \
-  include/utilcpp/release_assert.h include/utilcpp/disable_copy.h
+  include/dbccpp/CountProxy.h src/DbConnectionFactory.h \
+  include/utilcpp/scoped_ptr.h include/utilcpp/release_assert.h \
+  include/utilcpp/disable_copy.h
 obj/DbConnectionFactory.o: src/DbConnectionFactory.cpp \
   src/DbConnectionFactory.h include/dbccpp/DbConnection.h \
   include/dbccpp/PreparedStatement.h include/dbccpp/ResultSet.h \
   include/utilcpp/declarations.h include/dbccpp/DbExceptions.h \
-  src/sqlite/SQLiteConnection.h src/sqlite/SQLitePreparedStatement.h \
-  src/sqlite/SQLiteResultSet.h include/utilcpp/scoped_ptr.h \
-  include/utilcpp/release_assert.h include/utilcpp/disable_copy.h
+  include/dbccpp/CountProxy.h src/sqlite/SQLiteConnection.h \
+  src/sqlite/SQLitePreparedStatement.h src/sqlite/SQLiteResultSet.h \
+  include/utilcpp/scoped_ptr.h include/utilcpp/release_assert.h \
+  include/utilcpp/disable_copy.h
+obj/PreparedStatement.o: src/PreparedStatement.cpp \
+  include/dbccpp/PreparedStatement.h include/dbccpp/ResultSet.h \
+  include/utilcpp/declarations.h include/dbccpp/DbExceptions.h \
+  include/dbccpp/CountProxy.h
+obj/ResultSet.o: src/ResultSet.cpp include/dbccpp/ResultSet.h \
+  include/utilcpp/declarations.h include/dbccpp/DbExceptions.h
 obj/sqlite/SQLiteConnection.o: src/sqlite/SQLiteConnection.cpp \
   src/sqlite/SQLiteConnection.h src/sqlite/SQLitePreparedStatement.h \
   src/sqlite/SQLiteResultSet.h include/dbccpp/ResultSet.h \
   include/utilcpp/declarations.h include/dbccpp/DbExceptions.h \
-  include/dbccpp/PreparedStatement.h include/utilcpp/scoped_ptr.h \
-  include/utilcpp/release_assert.h include/utilcpp/disable_copy.h \
-  src/sqlite/../DbConnectionFactory.h include/dbccpp/DbConnection.h \
+  include/dbccpp/PreparedStatement.h include/dbccpp/CountProxy.h \
+  include/utilcpp/scoped_ptr.h include/utilcpp/release_assert.h \
+  include/utilcpp/disable_copy.h src/sqlite/../DbConnectionFactory.h \
+  include/dbccpp/DbConnection.h src/sqlite/SQLiteCountProxy.h \
   src/sqlite/SQLiteExceptions.h
+obj/sqlite/SQLiteCountProxy.o: src/sqlite/SQLiteCountProxy.cpp \
+  src/sqlite/SQLiteCountProxy.h include/dbccpp/CountProxy.h \
+  include/utilcpp/declarations.h
 obj/sqlite/SQLitePreparedStatement.o: src/sqlite/SQLitePreparedStatement.cpp \
   src/sqlite/SQLitePreparedStatement.h src/sqlite/SQLiteResultSet.h \
   include/dbccpp/ResultSet.h include/utilcpp/declarations.h \
   include/dbccpp/DbExceptions.h include/dbccpp/PreparedStatement.h \
+  include/dbccpp/CountProxy.h include/utilcpp/scoped_ptr.h \
+  include/utilcpp/release_assert.h include/utilcpp/disable_copy.h \
+  src/sqlite/SQLiteCountProxy.h src/sqlite/SQLiteConnection.h \
+  src/sqlite/../DbConnectionFactory.h include/dbccpp/DbConnection.h \
+  src/sqlite/SQLiteExceptions.h
+obj/sqlite/SQLiteResultSet.o: src/sqlite/SQLiteResultSet.cpp \
+  src/sqlite/SQLiteResultSet.h include/dbccpp/ResultSet.h \
+  include/utilcpp/declarations.h include/dbccpp/DbExceptions.h \
+  src/sqlite/SQLitePreparedStatement.h \
+  include/dbccpp/PreparedStatement.h include/dbccpp/CountProxy.h \
   include/utilcpp/scoped_ptr.h include/utilcpp/release_assert.h \
   include/utilcpp/disable_copy.h src/sqlite/SQLiteConnection.h \
   src/sqlite/../DbConnectionFactory.h include/dbccpp/DbConnection.h \
@@ -31,4 +53,5 @@ test/obj/main.o: test/src/main.cpp test/testcpp/include/testcpp/testcpp.h \
   include/utilcpp/release_assert.h include/utilcpp/disable_copy.h \
   test/testcpp/include/testcpp/assert_impl.h include/dbccpp/dbccpp.h \
   include/dbccpp/DbConnection.h include/dbccpp/PreparedStatement.h \
-  include/dbccpp/ResultSet.h include/dbccpp/DbExceptions.h
+  include/dbccpp/ResultSet.h include/dbccpp/DbExceptions.h \
+  include/dbccpp/CountProxy.h

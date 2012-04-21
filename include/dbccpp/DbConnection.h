@@ -21,7 +21,7 @@ public:
     static void connect(const std::string& driver, const std::string& params);
 
     virtual PreparedStatement::ptr prepareStatement(const std::string& sql) = 0;
-    virtual CountProxy& executeUpdate(const std::string& sql) = 0;
+    virtual const CountProxy& executeUpdate(const std::string& sql) = 0;
     // TODO: executeQuery
 
 private:

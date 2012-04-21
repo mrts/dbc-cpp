@@ -38,7 +38,7 @@ public:
     inline sqlite3* handle()
     { return _db.get(); }
 
-    virtual CountProxy& executeUpdate(const std::string& sql);
+    virtual const CountProxy& executeUpdate(const std::string& sql);
 
 private:
     SQLiteConnection(const std::string& params);

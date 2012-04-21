@@ -36,7 +36,7 @@ SQLiteConnection::SQLiteConnection(const std::string& params) :
     }
 }
 
-CountProxy& SQLiteConnection::executeUpdate(const std::string& sql)
+const CountProxy& SQLiteConnection::executeUpdate(const std::string& sql)
 {
     static SQLiteCountProxy count(handle());
 

@@ -44,10 +44,9 @@ public:
      *
      * @throw DbException
      */
-    virtual void set(int parameterIndex, const std::string& val) = 0;
-    virtual void set(int parameterIndex, int val) = 0;
-    virtual void set(int parameterIndex, double val) = 0;
-    virtual void set(int parameterIndex, bool value) = 0;
+    void set(int parameterIndex, const char* val);
+    template <typename T>
+    void set(int parameterIndex, const T& val);
 
     /** Bind null to the prepared statement.
      *
@@ -101,7 +100,7 @@ public:
      *
      * @throw DbException
      */
-    virtual CountProxy& executeUpdate() = 0;
+    virtual const CountProxy& executeUpdate() = 0;
 
     // FIXME: this should be a 64-bit type really
     // FIXME: information is SQLite-specific
@@ -118,6 +117,41 @@ public:
 
     /** Get the underlying SQL statement. */
     virtual const char* getSQL() const = 0;
+
+protected:
+    // NVI for set()
+    virtual void setString(int parameterIndex, const std::string& val) = 0;
+    virtual void setInt(int parameterIndex, const int& val) = 0;
+    virtual void setDouble(int parameterIndex, const double& val) = 0;
+    virtual void setBool(int parameterIndex, const bool& value) = 0;
+};
+
+class ParameterTrackerMixin
+{
+public:
+    ParameterTrackerMixin(unsigned int num_params) :
+        _num_params(num_params),
+        _set_params_tracker(0)
+    {}
+
+    void setParameter(unsigned int index)
+    {
+        if (index < 1 || index > 63 || index > _num_params)
+            throw std::runtime_error("out of range");
+
+        // index is 1-based, tracker 0-based
+        _set_params_tracker |= (1U << (index - 1));
+    }
+
+    bool areAllParamsSet()
+    {
+        unsigned int num_params_mask = ~(~0U << _num_params);
+        return ((_set_params_tracker & num_params_mask) == num_params_mask);
+    }
+
+private:
+    unsigned int _num_params;
+    unsigned int _set_params_tracker;
 };
 
 }

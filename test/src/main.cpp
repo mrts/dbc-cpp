@@ -10,7 +10,7 @@ public:
     typedef void (TestDbccpp::*TestMethod)();
 
     TestDbccpp() :
-        // use comma operator to assure connect() is called before instance()
+        // (ab)use comma operator to assure connect() is called before instance()
         _db((dbc::DbConnection::connect("sqlite", "test.db"),
             dbc::DbConnection::instance()))
     {
@@ -53,25 +53,28 @@ public:
         }
 
         dbc::PreparedStatement::ptr select = _db.prepareStatement(
-                "SELECT name FROM person "
+                "SELECT DISTINCT name FROM person "
                 "WHERE name LIKE ? ORDER BY name");
         select->set(1, "%vin");
-
-        dbc::ResultSet::ptr results = select->executeQuery();
 
         std::vector<std::string> expectedResults;
         expectedResults.push_back("Ervin");
         expectedResults.push_back("Melvin");
 
+        dbc::ResultSet::ptr results = select->executeQuery();
+
         unsigned int counter = 0;
 
-        while (++counter, results->next())
-            Test::assertEqual<int>("Access rows and columns in ResultSet",
-                    results->getInt(1), 1);
-            // Test::assertEqual<std::string>("Access rows and columns in ResultSet",
-                    // results->get<std::string>(1), expectedResults[counter]);
+        while (results->next())
+        {
+            std::string name;
+            results->get<std::string>(0, name);
 
-        // TODO: results.get<std::string>("name"),
+            // TODO: test int and double as well
+            Test::assertEqual<std::string>(
+                    "Accessing rows and columns in ResultSet works",
+                    name, expectedResults[counter++]);
+        }
     }
 
     void testInvalidQueries()
@@ -83,6 +86,18 @@ public:
         Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
             ("Unbound prepared statement throws SqlError on non-null columns",
              *this, &TestDbccpp::executeUnboundStatement);
+
+        Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
+            ("Out of range bind parameter index throws SqlError",
+             *this, &TestDbccpp::bindIndexOutOfRange);
+
+        Test::assertThrows<TestDbccpp, TestMethod, dbc::DbErrorBase>
+            ("Accessing out of range columns throws DbError",
+             *this, &TestDbccpp::columnIndexOutOfRange);
+
+        Test::assertThrows<TestDbccpp, TestMethod, dbc::DbErrorBase>
+            ("Calling next() after last row throws DbError",
+             *this, &TestDbccpp::stepAfterLastRow);
     }
 
     void executeInvalidStatement()
@@ -94,6 +109,38 @@ public:
         dbc::PreparedStatement::ptr insert = _db.prepareStatement(
                 "INSERT INTO person (name) VALUES (?)");
         insert->executeUpdate();
+    }
+
+    void bindIndexOutOfRange()
+    {
+        dbc::PreparedStatement::ptr insert = _db.prepareStatement(
+                "INSERT INTO person (name) VALUES (?)");
+        insert->set(100, "invalid");
+    }
+
+    void columnIndexOutOfRange()
+    {
+        dbc::PreparedStatement::ptr select = _db.prepareStatement(
+                "SELECT name FROM person");
+
+        dbc::ResultSet::ptr results = select->executeQuery();
+
+        results->next();
+
+        std::string name;
+        results->get<std::string>(1, name);
+    }
+
+    void stepAfterLastRow()
+    {
+        dbc::PreparedStatement::ptr select = _db.prepareStatement(
+                "SELECT name FROM person ");
+        dbc::ResultSet::ptr results = select->executeQuery();
+
+        while (results->next())
+            ;
+
+        results->next();
     }
 
 private:

@@ -31,14 +31,10 @@ class SQLitePreparedStatement : public PreparedStatement
 public:
     SQLitePreparedStatement(const std::string& sql, SQLiteConnection& db);
 
-    virtual void set(int index, const std::string& value);
-    virtual void set(int index, int value);
-    virtual void set(int index, double value);
-    virtual void set(int index, bool value);
     virtual void setNull(int index);
 
     virtual ResultSet::ptr executeQuery();
-    virtual CountProxy& executeUpdate();
+    virtual const CountProxy& executeUpdate();
 
     virtual void reset();
     virtual void clear();
@@ -46,6 +42,18 @@ public:
     virtual int getLastInsertId();
 
     virtual const char* getSQL() const;
+
+    sqlite3_stmt* handle()
+    { return _statement.get(); }
+
+    SQLiteConnection& getDb()
+    { return _db; }
+
+protected:
+    virtual void setString(int parameterIndex, const std::string& val);
+    virtual void setInt(int parameterIndex, const int& val);
+    virtual void setDouble(int parameterIndex, const double& val);
+    virtual void setBool(int parameterIndex, const bool& value);
 
 private:
 	SQLiteConnection& _db;
