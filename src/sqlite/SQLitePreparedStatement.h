@@ -4,6 +4,7 @@
 #include "SQLiteResultSet.h"
 
 #include <dbccpp/PreparedStatement.h>
+#include <dbccpp/ParameterTracker.h>
 
 #include <utilcpp/scoped_ptr.h>
 
@@ -15,7 +16,6 @@ namespace dbc
 
 class SQLiteConnection;
 class CountProxy;
-
 
 class SQLitePreparedStatement : public PreparedStatement
 {
@@ -50,9 +50,16 @@ private:
     typedef utilcpp::scoped_ptr<sqlite3_stmt, finalize_sqlite3_stmt>
         sqlite_stmt_scoped_ptr;
 
+    inline void checkParams()
+    {
+        if (!_param_tracker.areAllParametersSet())
+            throw std::invalid_argument("Some prepared statement "
+                    "parameters haven't been set");
+    }
+
 	SQLiteConnection& _db;
 	sqlite_stmt_scoped_ptr _statement;
-    int _num_params;
+    ParameterTracker _param_tracker;
 };
 
 }

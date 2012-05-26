@@ -141,34 +141,6 @@ protected:
     virtual void setBool(int parameterIndex, const bool& value) = 0;
 };
 
-class ParameterTrackerMixin
-{
-public:
-    ParameterTrackerMixin(unsigned int num_params) :
-        _num_params(num_params),
-        _set_params_tracker(0)
-    {}
-
-    void setParameter(unsigned int index)
-    {
-        if (index < 1 || index > 63 || index > _num_params)
-            throw std::runtime_error("out of range");
-
-        // index is 1-based, tracker 0-based
-        _set_params_tracker |= (1U << (index - 1));
-    }
-
-    bool areAllParamsSet()
-    {
-        unsigned int num_params_mask = ~(~0U << _num_params);
-        return ((_set_params_tracker & num_params_mask) == num_params_mask);
-    }
-
-private:
-    unsigned int _num_params;
-    unsigned int _set_params_tracker;
-};
-
 }
 
 #endif /* DBCCPP_PREPAREDSTATEMENT_H__ */

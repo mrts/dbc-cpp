@@ -11,6 +11,30 @@ void finalize_sqlite3_stmt(sqlite3_stmt* statement)
         sqlite3_finalize(statement);
 }
 
+namespace
+{
+
+/** Helper to init _statement in SQLitePreparedStatement constructor. */
+sqlite3_stmt* init_statement(dbc::SQLiteConnection& db, const std::string& sql)
+{
+    const char* tail_unused;
+
+    // If the caller knows that the supplied string is nul-terminated,
+    // then there is a small performance advantage to be gained by passing an
+    // nByte parameter that is equal to the number of bytes in the input
+    // string *including* the nul-terminator bytes.
+
+    sqlite3_stmt* statement;
+    int ret = sqlite3_prepare_v2(db.handle(), sql.c_str(), sql.length() + 1,
+            &statement, &tail_unused);
+    if (ret != SQLITE_OK)
+        throw dbc::SQLiteSqlError(db, "sqlite3_prepare_v2() failed", sql);
+
+    return statement;
+}
+
+}
+
 namespace dbc
 {
 
@@ -22,37 +46,26 @@ namespace dbc
         throw SQLiteSqlError(_db, err.str(), getSQL()); \
     }
 
+// sql has to be UTF-8
 SQLitePreparedStatement::SQLitePreparedStatement(const std::string& sql,
         SQLiteConnection& db) :
     PreparedStatement(),
     _db(db),
-    _statement(NULL)
-{
-    const char* tail_unused;
-
-    // sql has to be UTF-8
-
-    // If the caller knows that the supplied string is nul-terminated,
-    // then there is a small performance advantage to be gained by passing an
-    // nByte parameter that is equal to the number of bytes in the input
-    // string *including* the nul-terminator bytes.
-
-    sqlite3_stmt* statement;
-    int ret = sqlite3_prepare_v2(_db.handle(), sql.c_str(), sql.length() + 1,
-            &statement, &tail_unused);
-    if (ret != SQLITE_OK)
-        throw SQLiteSqlError(_db, "sqlite3_prepare_v2() failed", sql);
-
-    _statement.reset(statement);
-}
+    _statement(init_statement(db, sql)),
+    _param_tracker(sqlite3_bind_parameter_count(_statement.get()))
+{}
 
 ResultSet::ptr SQLitePreparedStatement::executeQuery()
 {
+    checkParams();
+
     return ResultSet::ptr(new SQLiteResultSet(*this));
 }
 
 const CountProxy& SQLitePreparedStatement::executeUpdate()
 {
+    checkParams();
+
     static SQLiteCountProxy count(_db.handle());
 
     int ret = sqlite3_step(_statement.get());
@@ -103,24 +116,28 @@ const char* SQLitePreparedStatement::getSQL() const
 
 void SQLitePreparedStatement::setInt(int index, const int& value)
 {
+    _param_tracker.setParameter(index);
     int ret = sqlite3_bind_int(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
 }
 
 void SQLitePreparedStatement::setBool(int index, const bool& value)
 {
+    _param_tracker.setParameter(index);
     int ret = sqlite3_bind_int(_statement.get(), index, value ? 1 : 0);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
 }
 
 void SQLitePreparedStatement::setDouble(int index, const double& value)
 {
+    _param_tracker.setParameter(index);
     int ret = sqlite3_bind_double(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_double", value);
 }
 
 void SQLitePreparedStatement::setString(int index, const std::string& value)
 {
+    _param_tracker.setParameter(index);
     // Note that SQLITE_TRANSIENT makes copy of the data.
     // This may be expensive if it is large.
 
@@ -132,6 +149,7 @@ void SQLitePreparedStatement::setString(int index, const std::string& value)
 
 void SQLitePreparedStatement::setNull(int index)
 {
+    _param_tracker.setParameter(index);
     int ret = sqlite3_bind_null(_statement.get(), index);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_null", "");
 }
