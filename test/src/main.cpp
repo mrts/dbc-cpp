@@ -48,6 +48,7 @@ public:
         std::vector<std::string> names;
         names.push_back("Ervin");
         names.push_back("Melvin");
+        names.push_back("Kelvin");
         names.push_back("Steve");
 
         for (size_t i = 0; i < names.size(); ++i)
@@ -65,9 +66,10 @@ public:
                 "WHERE name LIKE ? ORDER BY name");
         select->set(1, "%vin");
 
-        std::vector<std::string> expectedResults;
-        expectedResults.push_back("Ervin");
-        expectedResults.push_back("Melvin");
+        std::vector<std::string> expected;
+        expected.push_back("Ervin");
+        expected.push_back("Kelvin");
+        expected.push_back("Melvin");
 
         dbc::ResultSet::ptr results = select->executeQuery();
 
@@ -75,25 +77,36 @@ public:
 
         while (results->next())
         {
-            // access by copy
-            std::string name = results->get<std::string>(0);
-
+            // access strings by copy
             Test::assertEqual<std::string>(
                     "Accessing rows and columns in ResultSet works (str copy)",
-                    name, expectedResults[counter]);
-
-            // or by reference
-            results->get<std::string>(0, name);
-
-            Test::assertEqual<std::string>(
-                    "Accessing rows and columns in ResultSet works (str ref)",
-                    name, expectedResults[counter]);
-
-            // TODO: test int and double as well
-
-            ++counter;
+                    results->get<std::string>(0), expected.at(counter++));
         }
 
+        Test::assertEqual<int>(
+                "Iteration over result set returns all rows",
+                counter, expected.size());
+
+        select  = _db.prepareStatement("SELECT * FROM person ORDER BY name");
+        results = select->executeQuery();
+        results->next();
+
+        // access strings by out parameter
+        std::string name;
+        results->get(1, name);
+
+        Test::assertEqual<std::string>(
+                "Gettings strings by reference works",
+                name, "Ervin");
+
+        // TODO: beware of double comparison
+        Test::assertEqual<double>(
+                "Getting doubles works",
+                results->get<double>(2), 1.80);
+
+        Test::assertEqual<int>(
+                "Getting ints works",
+                results->get<int>(0), 1);
     }
 
     void testInvalidQueries()
