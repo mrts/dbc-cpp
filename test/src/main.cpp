@@ -79,6 +79,12 @@ public:
 
     void testInvalidQueries()
     {
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+        Test::assertThrows<dbc::SqlError>
+            ("Invalid statement throws SqlError",
+             [this] () { executeInvalidStatement(); });
+
+#else
         Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
             ("Invalid statement throws SqlError",
              *this, &TestDbccpp::executeInvalidStatement);
@@ -98,6 +104,7 @@ public:
         Test::assertThrows<TestDbccpp, TestMethod, dbc::DbErrorBase>
             ("Calling next() after last row throws DbError",
              *this, &TestDbccpp::stepAfterLastRow);
+#endif
     }
 
     void executeInvalidStatement()

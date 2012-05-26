@@ -7,11 +7,7 @@
 
 #include <dbccpp/DbConnection.h>
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
- #include <memory>
-#else
- #include <utilcpp/scoped_ptr.h>
-#endif
+#include <utilcpp/scoped_ptr.h>
 
 struct sqlite3;
 void finalize_sqlite3(sqlite3*);
@@ -21,11 +17,6 @@ namespace dbc
 
 dbconnection_transferable_ptr createSQLiteConnection(const std::string& params);
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
-  typedef std::unique_ptr<sqlite3, finalize_sqlite3> sqlite_scoped_ptr;
-#else
-  typedef utilcpp::scoped_ptr<sqlite3, finalize_sqlite3> sqlite_scoped_ptr;
-#endif
 
 class SQLiteConnection : public DbConnection
 {
@@ -45,6 +36,8 @@ private:
     SQLiteConnection(const std::string& params);
 
     friend dbconnection_transferable_ptr createSQLiteConnection(const std::string& params);
+
+    typedef utilcpp::scoped_ptr<sqlite3, finalize_sqlite3> sqlite_scoped_ptr;
 
     std::string _params;
     sqlite_scoped_ptr _db;

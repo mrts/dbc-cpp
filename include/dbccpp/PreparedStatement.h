@@ -48,11 +48,19 @@ public:
      * @throw DbException
      */
     template <typename T>
-    typename stdutil::enable_if<stdutil::is_pod<T>, void>::type
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+    typename std::enable_if<std::is_pod<T>::value, void>::type
+#else
+    typename boost::enable_if<boost::is_pod<T>, void>::type
+#endif
     set(int parameterIndex, T val);
 
     template <typename T>
-    typename stdutil::disable_if<stdutil::is_pod<T>, void>::type
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+    typename std::enable_if<!std::is_pod<T>::value, void>::type
+#else
+    typename boost::disable_if<boost::is_pod<T>, void>::type
+#endif
     set(int parameterIndex, const T& val);
 
     /** Bind null to the prepared statement.
