@@ -14,8 +14,16 @@ public:
         _db((dbc::DbConnection::connect("sqlite", "test.db"),
             dbc::DbConnection::instance()))
     {
-        _db.executeUpdate("CREATE TABLE IF NOT EXISTS person "
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL)");
+        _db.executeUpdate("CREATE TABLE person ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "name TEXT NOT NULL, "
+                "height NOT NULL DEFAULT 1.80"
+                ")");
+    }
+
+    virtual ~TestDbccpp()
+    {
+        _db.executeUpdate("DROP TABLE person");
     }
 
     void test()
