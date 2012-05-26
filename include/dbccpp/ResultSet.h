@@ -50,6 +50,17 @@ public:
     template <typename T>
     void get(int columnIndex, T& out);
 
+    // FIXME: add NULL checking, but assure this can be called only before
+    // getting values:
+    //
+    // The sqlite3_column_type() routine returns the datatype
+    // code for the initial data type of the result column. The returned value
+    // is one of SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, or
+    // SQLITE_NULL. The value returned by sqlite3_column_type() is only
+    // meaningful if no type conversions have occurred as described below.
+    //
+    // virtual bool isNull(int columnIndex);
+
 protected:
     // NVI for get()
     virtual void getString(int columnIndex, std::string& out) = 0;
