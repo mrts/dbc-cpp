@@ -39,6 +39,7 @@ public:
     { return _db.get(); }
 
     virtual const CountProxy& executeUpdate(const std::string& sql);
+    virtual ResultSet::ptr executeQuery(const std::string& sql);
 
 private:
     SQLiteConnection(const std::string& params);

@@ -1,6 +1,7 @@
 #include "SQLiteConnection.h"
 #include "SQLiteCountProxy.h"
 #include "SQLiteExceptions.h"
+#include "SQLitePreparedStatement.h"
 #include "../DbConnectionFactory.h"
 
 #include <sqlite3.h>
@@ -45,6 +46,13 @@ const CountProxy& SQLiteConnection::executeUpdate(const std::string& sql)
         throw SQLiteSqlError(*this, "sqlite3_exec() failed", sql);
 
     return count;
+}
+
+ResultSet::ptr SQLiteConnection::executeQuery(const std::string& sql)
+{
+    SQLitePreparedStatement statement(sql, *this);
+
+    return statement.executeQuery();
 }
 
 }

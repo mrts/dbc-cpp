@@ -109,8 +109,6 @@ public:
      */
     virtual const CountProxy& executeUpdate() = 0;
 
-    // FIXME: this should be a 64-bit type really
-    // FIXME: information is SQLite-specific
     /** Return the row id of the most recent successful INSERT into the
      * active database. If the insert was made to a table that has a column
      * of type INTEGER PRIMARY KEY then the last value from that column is
@@ -120,6 +118,8 @@ public:
      *
      * @throw DbException
      */
+    // FIXME: this should be a 64-bit type really
+    // FIXME: information is SQLite-specific
     virtual int getLastInsertId() = 0;
 
     /** Get the underlying SQL statement. */

@@ -22,7 +22,7 @@ public:
 
     virtual PreparedStatement::ptr prepareStatement(const std::string& sql) = 0;
     virtual const CountProxy& executeUpdate(const std::string& sql) = 0;
-    // TODO: executeQuery
+    virtual ResultSet::ptr executeQuery(const std::string& sql) = 0;
 
 private:
     static std::string _driver;
