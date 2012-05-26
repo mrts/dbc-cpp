@@ -67,14 +67,25 @@ public:
 
         while (results->next())
         {
-            std::string name;
+            // access by copy
+            std::string name = results->get<std::string>(0);
+
+            Test::assertEqual<std::string>(
+                    "Accessing rows and columns in ResultSet works (str copy)",
+                    name, expectedResults[counter]);
+
+            // or by reference
             results->get<std::string>(0, name);
 
-            // TODO: test int and double as well
             Test::assertEqual<std::string>(
-                    "Accessing rows and columns in ResultSet works",
-                    name, expectedResults[counter++]);
+                    "Accessing rows and columns in ResultSet works (str ref)",
+                    name, expectedResults[counter]);
+
+            // TODO: test int and double as well
+
+            ++counter;
         }
+
     }
 
     void testInvalidQueries()

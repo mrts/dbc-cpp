@@ -13,7 +13,7 @@ It has the following features:
 
 * result sets for accessing rows and columns from query results.
 
-**Status**: development/unstable.
+**Development status**: testing/beta.
 
 ``dbc-cpp`` is `licenced under the MIT licence`_.
 
@@ -27,7 +27,40 @@ Usage
 
 Quick overview::
 
-  (to be written)
+  #include <dbccpp/dbccpp.h>
+
+  dbc::DbConnection::connect("sqlite", "test.db");
+  dbc::DbConnection& db = dbc::DbConnection::instance();
+
+  // execute DDL statements directly with the connection object
+  db.executeUpdate("CREATE TABLE IF NOT EXISTS person "
+            "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL)");
+
+  // use prepared statements and argument binding for DML statements
+  dbc::PreparedStatement::ptr insert = db.prepareStatement("INSERT INTO "
+            "person (name) VALUES (?)");
+  insert->set(1, "Ervin");
+
+  // DML statements return number of updated rows
+  assert(insert->executeUpdate() == 1);
+
+  // use prepared statements and argument binding for queries
+  dbc::PreparedStatement::ptr select = db.prepareStatement("SELECT DISTINCT "
+          "name FROM person WHERE name LIKE ? ORDER BY name");
+  select->set(1, "%vin");
+
+  // queries return result sets
+  dbc::ResultSet::ptr results = select->executeQuery();
+
+  // use next() to fetch and iterate over results
+  while (results->next())
+  {
+       // access strings by copy
+       std::string name = results->get<std::string>(0);
+
+       // or by reference
+       results->get<std::string>(0, name);
+  }
 
 See `main test`_ for more details.
 

@@ -22,6 +22,14 @@ bool ResultSet::get(int columnIndex)
 }
 
 template <>
+std::string ResultSet::get(int columnIndex)
+{
+    std::string ret;
+    getString(columnIndex, ret);
+    return ret;
+}
+
+template <>
 void ResultSet::get(int columnIndex, std::string& out)
 {
     return getString(columnIndex, out);
