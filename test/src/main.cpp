@@ -121,17 +121,33 @@ public:
             ("Invalid statement throws SqlError",
              *this, &TestDbccpp::executeInvalidStatement);
 
-        Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
-            ("Unbound prepared statement throws SqlError on non-null columns",
+        Test::assertThrows<TestDbccpp, TestMethod, std::invalid_argument>
+            ("Unbound prepared statement throws std::invalid_argument",
              *this, &TestDbccpp::executeUnboundStatement);
 
-        Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
-            ("Out of range bind parameter index throws SqlError",
-             *this, &TestDbccpp::bindIndexOutOfRange);
+        Test::assertThrows<TestDbccpp, TestMethod, std::invalid_argument>
+            ("Unbound parameter throws std::invalid_argument",
+             *this, &TestDbccpp::executeWithUnboundParameter);
+
+        Test::assertThrows<TestDbccpp, TestMethod, std::invalid_argument>
+            ("Out of range bind parameter index throws std::invalid_argument",
+             *this, &TestDbccpp::setIndexOutOfRange);
+
+        Test::assertWontThrow<TestDbccpp, TestMethod>
+            ("sizeof(int) parameters are supported",
+             *this, &TestDbccpp::justEnoughParameters);
+
+        Test::assertThrows<TestDbccpp, TestMethod, std::invalid_argument>
+            ("More than sizeof(int)*8 parameters throws std::invalid_argument",
+             *this, &TestDbccpp::tooManyParameters);
 
         Test::assertThrows<TestDbccpp, TestMethod, dbc::DbErrorBase>
             ("Accessing out of range columns throws DbError",
-             *this, &TestDbccpp::columnIndexOutOfRange);
+             *this, &TestDbccpp::getIndexOutOfRange);
+
+        Test::assertThrows<TestDbccpp, TestMethod, dbc::DbErrorBase>
+            ("Calling get() without calling next() first throws DbError",
+             *this, &TestDbccpp::getWithoutNext);
 
         Test::assertThrows<TestDbccpp, TestMethod, dbc::DbErrorBase>
             ("Calling next() after last row throws DbError",
@@ -142,7 +158,6 @@ public:
     void executeInvalidStatement()
     { _db.executeUpdate("INVALID STATEMENT"); }
 
-    // note that unbound parameters remain NULL
     void executeUnboundStatement()
     {
         dbc::PreparedStatement::ptr insert = _db.prepareStatement(
@@ -150,14 +165,50 @@ public:
         insert->executeUpdate();
     }
 
-    void bindIndexOutOfRange()
+    void executeWithUnboundParameter()
+    {
+        dbc::PreparedStatement::ptr insert = _db.prepareStatement(
+                "INSERT INTO person (id, name) VALUES (?, ?)");
+        insert->set(1, 1);
+        // second parameter remains unbound
+        insert->executeUpdate();
+    }
+
+    void parameterCheckHelper(size_t limit)
+    {
+        std::ostringstream sql;
+
+        sql << "SELECT ";
+
+        for (size_t i = 0; i < limit; ++i)
+            sql << "?+";
+
+        // remove last +
+        long pos = sql.tellp();
+        sql.seekp(pos - 1);
+        sql << ";";
+
+        dbc::PreparedStatement::ptr sum = _db.prepareStatement(sql.str());
+    }
+
+    void justEnoughParameters()
+    {
+        parameterCheckHelper(sizeof(unsigned int) * 8);
+    }
+
+    void tooManyParameters()
+    {
+        parameterCheckHelper(sizeof(unsigned int) * 8 + 1);
+    }
+
+    void setIndexOutOfRange()
     {
         dbc::PreparedStatement::ptr insert = _db.prepareStatement(
                 "INSERT INTO person (name) VALUES (?)");
         insert->set(100, "invalid");
     }
 
-    void columnIndexOutOfRange()
+    void getIndexOutOfRange()
     {
         dbc::PreparedStatement::ptr select = _db.prepareStatement(
                 "SELECT name FROM person");
@@ -165,15 +216,22 @@ public:
         dbc::ResultSet::ptr results = select->executeQuery();
 
         results->next();
+        // index is 0-based in get
+        results->get<std::string>(1);
+    }
 
-        std::string name;
-        results->get<std::string>(1, name);
+    void getWithoutNext()
+    {
+        dbc::PreparedStatement::ptr select = _db.prepareStatement(
+                "SELECT name FROM person");
+        dbc::ResultSet::ptr results = select->executeQuery();
+        results->get<std::string>(0);
     }
 
     void stepAfterLastRow()
     {
         dbc::PreparedStatement::ptr select = _db.prepareStatement(
-                "SELECT name FROM person ");
+                "SELECT name FROM person");
         dbc::ResultSet::ptr results = select->executeQuery();
 
         while (results->next())
@@ -181,6 +239,18 @@ public:
 
         results->next();
     }
+
+    // TODO: add type tests as well
+    // SQLite attempts to convert results meaningfully
+    void getStringFromIntColumn();
+    void getIntFromStringColumn();
+    void getDoubleFromStringColumn();
+    void getIntFromDoubleColumn();
+    void getDoubleFromIntColumn();
+
+    void getStringFromNullColumn();
+    void getIntFromNullColumn();
+    void getDoubleFromNullColumn();
 
 private:
     dbc::DbConnection& _db;
