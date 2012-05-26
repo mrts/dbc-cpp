@@ -4,8 +4,11 @@ LIBNAME  = dbccpp
 
 TARGET   = lib/lib$(LIBNAME).a
 
-OPTIMIZE = -O2 # or -g when debugging
-COMPILER = clang++
+# For building with clang++ 3.1 in Ubuntu 12.04, install system clang and
+# add -I/usr/include/clang/3.0/include to compile flags
+
+OPTIMIZE = -O2 # -g -std=c++0x | -std=c++11
+COMPILER = clang++ # g++
 
 CXX      = $(COMPILER)
 CXXFLAGS = -pipe $(OPTIMIZE) -fPIC -Wall -Wextra -Werror -D_REENTRANT
@@ -57,6 +60,9 @@ $(TEST): $(TARGET) $(TESTOBJS) $(TESTCPPLIB)
 
 test: $(TEST)
 	./$(TEST)
+
+dbg: $(TEST)
+	cgdb ./$(TEST)
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(TESTOBJS) $(TEST)
