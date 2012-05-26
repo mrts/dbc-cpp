@@ -8,8 +8,10 @@
 
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
   #include <memory>
+  namespace stdutil = std;
 #else
   #include <boost/smart_ptr/shared_ptr.hpp>
+  namespace stdutil = boost;
 #endif
 
 namespace dbc
@@ -26,11 +28,7 @@ class ResultSet
 
 public:
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
-    typedef std::shared_ptr<ResultSet> ptr;
-#else
-    typedef boost::shared_ptr<ResultSet> ptr;
-#endif
+    typedef stdutil::shared_ptr<ResultSet> ptr;
 
     /** Moves the cursor froward one row from its current position.
      *

@@ -9,8 +9,12 @@
 
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
   #include <memory>
+  #include <type_traits>
+  namespace stdutil = std;
 #else
   #include <boost/smart_ptr/shared_ptr.hpp>
+  #include <boost/type_traits.hpp>
+  namespace stdutil = boost;
 #endif
 
 namespace dbc
@@ -34,19 +38,22 @@ class PreparedStatement
 
 public:
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
-    typedef std::shared_ptr<PreparedStatement> ptr;
-#else
-    typedef boost::shared_ptr<PreparedStatement> ptr;
-#endif
+    typedef stdutil::shared_ptr<PreparedStatement> ptr;
 
     /** Bind value to the prepared statement at the given index.
      *
+     * Uses std::enable_if<> and std::is_pod<> to pass POD types
+     * by value and non-POD types by const reference.
+     *
      * @throw DbException
      */
-    void set(int parameterIndex, const char* val);
     template <typename T>
-    void set(int parameterIndex, const T& val);
+    typename stdutil::enable_if<stdutil::is_pod<T>, void>::type
+    set(int parameterIndex, T val);
+
+    template <typename T>
+    typename stdutil::disable_if<stdutil::is_pod<T>, void>::type
+    set(int parameterIndex, const T& val);
 
     /** Bind null to the prepared statement.
      *
