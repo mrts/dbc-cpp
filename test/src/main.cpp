@@ -23,7 +23,9 @@ public:
 
     virtual ~TestDbccpp()
     {
-        _db.executeUpdate("DROP TABLE person");
+        _db.executeUpdate("DROP TABLE IF EXISTS person");
+        _db.executeUpdate("DROP TABLE IF EXISTS test");
+        _db.executeUpdate("DROP TABLE IF EXISTS nullable");
     }
 
     void test()
