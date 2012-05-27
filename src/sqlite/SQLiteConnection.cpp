@@ -8,8 +8,7 @@
 
 void finalize_sqlite3(sqlite3* db)
 {
-    // TODO: destructors cannot throw,
-    // but we should report if ret != OK -> need logging
+    // As destructors cannot throw, we cannot handle the case when ret != OK
     if (db)
         sqlite3_close(db);
 }
