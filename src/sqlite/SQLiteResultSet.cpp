@@ -73,7 +73,7 @@ void SQLiteResultSet::checkRowAndColumn(const int columnIndex)
     }
 }
 
-void SQLiteResultSet::getString(int columnIndex, std::string& out)
+void SQLiteResultSet::getString(const int columnIndex, std::string& out)
 {
     checkRowAndColumn(columnIndex);
 
@@ -83,21 +83,21 @@ void SQLiteResultSet::getString(int columnIndex, std::string& out)
     out = result ? reinterpret_cast<const char *>(result) : "";
 }
 
-int SQLiteResultSet::getInt(int columnIndex)
+int SQLiteResultSet::getInt(const int columnIndex)
 {
     checkRowAndColumn(columnIndex);
 
     return sqlite3_column_int(_statement.handle(), columnIndex);
 }
 
-bool SQLiteResultSet::getBool(int columnIndex)
+bool SQLiteResultSet::getBool(const int columnIndex)
 {
     checkRowAndColumn(columnIndex);
 
     return sqlite3_column_int(_statement.handle(), columnIndex);
 }
 
-double SQLiteResultSet::getDouble(int columnIndex)
+double SQLiteResultSet::getDouble(const int columnIndex)
 {
     checkRowAndColumn(columnIndex);
 
