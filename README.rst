@@ -17,10 +17,28 @@ It has the following features:
 
 ``dbc-cpp`` is `licenced under the MIT licence`_.
 
-**Be sure to pull in submodules** after ``git clone``::
+**Be sure to pull in submodules** after ``git clone`` (see below
+under **Building**).
 
+Building
+--------
+
+Build and test ``dbc-cpp`` as follows (``clang++`` is the default compiler)::
+
+  git clone git://github.com/mrts/dbc-cpp.git
+
+  cd dbc-cpp
   git submodule init
   git submodule update
+
+  make -j 4
+  make test
+
+Includes are in ``include`` and the library will be in ``lib``.
+
+Add ``-I$(DBCCPPDIR)/include`` to include path and
+``-L$(DBCCPPDIR)/lib -ldbccpp -lsqlite3`` to linker flags in your
+project's ``Makefile``.
 
 Usage
 -----
@@ -55,10 +73,10 @@ Quick overview::
   // use next() to fetch and iterate over results
   while (results->next())
   {
-       // access strings by copy
+       // get strings by copy
        std::string name = results->get<std::string>(0);
 
-       // or by reference
+       // or into an out parameter (by refernce)
        results->get<std::string>(0, name);
   }
 
@@ -66,4 +84,4 @@ See `main test`_ for more details.
 
 .. _`JDBC`: http://en.wikipedia.org/wiki/Java_Database_Connectivity
 .. _`licenced under the MIT licence`: https://github.com/mrts/dbc-cpp/blob/master/LICENCE.rst
-.. _main test: https://github.com/mrts/dbc-cpp/blob/master/test/src/main.cpp
+.. _`main test`: https://github.com/mrts/dbc-cpp/blob/master/test/src/main.cpp
