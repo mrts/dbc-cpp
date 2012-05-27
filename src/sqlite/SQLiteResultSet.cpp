@@ -45,6 +45,12 @@ bool SQLiteResultSet::next()
     return false;
 }
 
+bool SQLiteResultSet::isNull(const int columnIndex)
+{
+    checkRowAndColumn(columnIndex);
+    return sqlite3_column_type(_statement.handle(), columnIndex) == SQLITE_NULL;
+}
+
 void SQLiteResultSet::checkRowAndColumn(const int columnIndex)
 {
     if (_status != ROW_READY)
@@ -74,8 +80,6 @@ void SQLiteResultSet::getString(int columnIndex, std::string& out)
     const unsigned char* result = sqlite3_column_text(_statement.handle(),
             columnIndex);
 
-    // note that this converts NULLs to ""
-    // TODO: document this as an assumption
     out = result ? reinterpret_cast<const char *>(result) : "";
 }
 

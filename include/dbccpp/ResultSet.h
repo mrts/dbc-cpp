@@ -42,24 +42,25 @@ public:
      */
     virtual bool next() = 0;
 
+    /** Returns true if the value of the designated column in the current row
+     * of this ResultSet object is NULL.
+     *
+     * Checking for null works correctly *only before* the column is accessed
+     * with get().
+     */
+    virtual bool isNull(int columnIndex) = 0;
+
     /** Retrieves the value of the designated column in the current row of
-     * this ResultSet object. */
+     * this ResultSet object.
+     *
+     * Returns default values (0 for ints, blanks for strings etc) for NULLs,
+     * use isNull() for explicit NULL checking.
+     */
     template <typename T>
     T get(int columnIndex);
 
     template <typename T>
     void get(int columnIndex, T& out);
-
-    // FIXME: add NULL checking, but assure this can be called only before
-    // getting values:
-    //
-    // The sqlite3_column_type() routine returns the datatype
-    // code for the initial data type of the result column. The returned value
-    // is one of SQLITE_INTEGER, SQLITE_FLOAT, SQLITE_TEXT, SQLITE_BLOB, or
-    // SQLITE_NULL. The value returned by sqlite3_column_type() is only
-    // meaningful if no type conversions have occurred as described below.
-    //
-    // virtual bool isNull(int columnIndex);
 
 protected:
     // NVI for get()

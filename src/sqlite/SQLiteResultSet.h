@@ -20,6 +20,7 @@ public:
     {}
 
     virtual bool next();
+    virtual bool isNull(int columnIndex);
 
 protected:
     virtual void getString(int columnIndex, std::string& out);
