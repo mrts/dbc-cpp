@@ -17,7 +17,7 @@ It has the following features:
 
 ``dbc-cpp`` is `licenced under the MIT licence`_.
 
-**Be sure to pull in submodules** after ``git clone`` (see below
+**Be sure to pull in submodules** with ``git clone --recursive`` (see below
 under **Building**).
 
 Building
@@ -25,11 +25,7 @@ Building
 
 Build and test ``dbc-cpp`` as follows (``clang++`` is the default compiler)::
 
-  git clone git://github.com/mrts/dbc-cpp.git
-
-  cd dbc-cpp
-  git submodule init
-  git submodule update
+  git clone --recursive git://github.com/mrts/dbc-cpp.git
 
   make -j 4
   make test
