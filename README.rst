@@ -27,6 +27,8 @@ Build and test ``dbc-cpp`` as follows (``clang++`` is the default compiler)::
 
   git clone --recursive git://github.com/mrts/dbc-cpp.git
 
+  cd dbc-cpp
+
   make -j 4
   make test
 
@@ -43,7 +45,10 @@ Quick overview::
 
   #include <dbccpp/dbccpp.h>
 
+  // call connect() with driver and file name to create the connection instance
   dbc::DbConnection::connect("sqlite", "test.db");
+
+  // call instance() to access the connection instance
   dbc::DbConnection& db = dbc::DbConnection::instance();
 
   // execute DDL statements directly with the connection object
@@ -72,7 +77,7 @@ Quick overview::
        // get strings by copy
        std::string name = results->get<std::string>(0);
 
-       // or into an out parameter (by refernce)
+       // or into an out parameter (by reference)
        results->get<std::string>(0, name);
   }
 

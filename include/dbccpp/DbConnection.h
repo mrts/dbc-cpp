@@ -10,15 +10,28 @@
 namespace dbc
 {
 
-// Factory method, Singleton, interface -
-// to create a system-wide resource whose specific type is not known to the
-// code that uses it.
+/** Interface for representing database connections.
+ *
+ * @throw DbException
+ */
 class DbConnection
 {
-    UTILCPP_DECLARE_SINGLETON_INTERFACE(DbConnection)
+    UTILCPP_DECLARE_INTERFACE(DbConnection)
 
 public:
+    /** Creates the singleton instance of the driver-specific database
+     * connection.
+     *
+     * @param driver Driver name in lowercase, e.g. "sqlite"
+     * @param params Parameters for the driver, e.g. file name for SQLite.
+     */
     static void connect(const std::string& driver, const std::string& params);
+
+    /** Access the singleton instance of the database connection.
+     * The connection instance needs to be created with connect() before this
+     * can be called.
+     */
+    static DbConnection& instance();
 
     virtual PreparedStatement::ptr prepareStatement(const std::string& sql) = 0;
     virtual const CountProxy& executeUpdate(const std::string& sql) = 0;
