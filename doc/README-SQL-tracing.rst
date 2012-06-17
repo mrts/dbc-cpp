@@ -6,8 +6,9 @@ Some day ``dbc::DbConnection`` will hopefully support tracing callbacks.
 For now, you may want to test SQL tracing with the following
 (add to ``test/src/main.cpp``)::
 
-  #include <sqlite3.h>
   #include "../../src/sqlite/SQLiteConnection.h"
+  #include <sqlite3.h>
+  #include <stdio.h>
 
   static void trace(void*, const char* sql)
   { fprintf(stderr, "SQL: %s\n", sql); }
