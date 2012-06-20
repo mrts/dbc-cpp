@@ -1,0 +1,16 @@
+*.lib
+*.obj
+*.exe
+*.manifest
+*.ilk
+*.pdb
+*.idb
+*.ncb
+*.suo
+*.db
+*.zip
+boost/
+boost-dist/
+sqlite-amalgamation/
+Debug/
+Release/

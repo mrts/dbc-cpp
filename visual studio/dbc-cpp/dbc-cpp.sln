@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbc-cpp", "dbc-cpp.vcproj", "{0C7330B9-3C7C-49FC-AF63-1494C787B64A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4CD61C40-F2DC-42EF-9680-AA9325FF879B} = {4CD61C40-F2DC-42EF-9680-AA9325FF879B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite", "sqlite.vcproj", "{4CD61C40-F2DC-42EF-9680-AA9325FF879B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test.vcproj", "{901486B9-789B-40EE-B748-A95E4F9CC624}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0C7330B9-3C7C-49FC-AF63-1494C787B64A} = {0C7330B9-3C7C-49FC-AF63-1494C787B64A}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C7330B9-3C7C-49FC-AF63-1494C787B64A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0C7330B9-3C7C-49FC-AF63-1494C787B64A}.Debug|Win32.Build.0 = Debug|Win32
+		{0C7330B9-3C7C-49FC-AF63-1494C787B64A}.Release|Win32.ActiveCfg = Release|Win32
+		{0C7330B9-3C7C-49FC-AF63-1494C787B64A}.Release|Win32.Build.0 = Release|Win32
+		{4CD61C40-F2DC-42EF-9680-AA9325FF879B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4CD61C40-F2DC-42EF-9680-AA9325FF879B}.Debug|Win32.Build.0 = Debug|Win32
+		{4CD61C40-F2DC-42EF-9680-AA9325FF879B}.Release|Win32.ActiveCfg = Release|Win32
+		{4CD61C40-F2DC-42EF-9680-AA9325FF879B}.Release|Win32.Build.0 = Release|Win32
+		{901486B9-789B-40EE-B748-A95E4F9CC624}.Debug|Win32.ActiveCfg = Debug|Win32
+		{901486B9-789B-40EE-B748-A95E4F9CC624}.Debug|Win32.Build.0 = Debug|Win32
+		{901486B9-789B-40EE-B748-A95E4F9CC624}.Release|Win32.ActiveCfg = Release|Win32
+		{901486B9-789B-40EE-B748-A95E4F9CC624}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
