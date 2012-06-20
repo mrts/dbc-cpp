@@ -106,7 +106,7 @@ void SQLitePreparedStatement::reset()
 
 int SQLitePreparedStatement::getLastInsertId()
 {
-    return sqlite3_last_insert_rowid(_db.handle());
+    return static_cast<int>(sqlite3_last_insert_rowid(_db.handle()));
 }
 
 const char* SQLitePreparedStatement::getSQL() const

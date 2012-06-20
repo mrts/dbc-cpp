@@ -42,7 +42,7 @@ bool SQLiteResultSet::next()
                     "sqlite3_step() failed", _statement.getSQL());
     }
 
-    return false;
+    // return false; <-- unreachable and generates a compiler warning in VC 2008
 }
 
 bool SQLiteResultSet::isNull(const int columnIndex)
@@ -94,7 +94,7 @@ bool SQLiteResultSet::getBool(const int columnIndex)
 {
     checkRowAndColumn(columnIndex);
 
-    return sqlite3_column_int(_statement.handle(), columnIndex);
+    return sqlite3_column_int(_statement.handle(), columnIndex) != 0;
 }
 
 double SQLiteResultSet::getDouble(const int columnIndex)
