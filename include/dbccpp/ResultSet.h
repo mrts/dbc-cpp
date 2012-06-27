@@ -8,10 +8,16 @@
 
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
   #include <memory>
-  namespace stdutil = std;
+  namespace dbc
+  {
+      namespace stdutil = std;
+  }
 #else
   #include <boost/smart_ptr/shared_ptr.hpp>
-  namespace stdutil = boost;
+  namespace dbc
+  {
+      namespace stdutil = boost;
+  }
 #endif
 
 namespace dbc

@@ -3,6 +3,7 @@
 
 #include <dbccpp/ResultSet.h>
 #include <dbccpp/CountProxy.h>
+#include <dbccpp/PreparedStatementBinder.h>
 #include <utilcpp/declarations.h>
 
 #include <string>
@@ -10,11 +11,17 @@
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
   #include <memory>
   #include <type_traits>
-  namespace stdutil = std;
+  namespace dbc
+  {
+      namespace stdutil = std;
+  }
 #else
   #include <boost/smart_ptr/shared_ptr.hpp>
   #include <boost/type_traits.hpp>
-  namespace stdutil = boost;
+  namespace dbc
+  {
+      namespace stdutil = boost;
+  }
 #endif
 
 namespace dbc
@@ -42,6 +49,11 @@ public:
 
     /** Bind value to the prepared statement at the given index.
      *
+     * This interface is low-level, it is adviseable to use the
+     * operator<<()-based binding instead where possible.
+     *
+     * Indexing is 1-based as per SQLite binding API.
+     *
      * Uses std::enable_if<> and std::is_pod<> to pass POD types
      * by value and non-POD types by const reference.
      *
@@ -68,6 +80,41 @@ public:
      * @throw DbException
      */
     virtual void setNull(int parameterIndex) = 0;
+
+    /** A convenient ostream-like wrapper around set() for binding values
+     * to the prepared statement in one go. E.g. binding values to statement
+     *
+     *   "SELECT * FROM PERSON WHERE name = ? AND age = ?"
+     *
+     * would work as follows:
+     *
+     *   *statement << "Ervin" << 38;
+     *
+     * Uses std::enable_if<> and std::is_pod<> to pass POD types
+     * by value and non-POD types by const reference.
+     *
+     * Returns the PreparedStatementBinder proxy object, a lightweight
+     * temporary binder that should not be used directly.
+     *
+     * @throw DbException
+     */
+    template <typename T>
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+    typename std::enable_if<std::is_pod<T>::value, PreparedStatementBinder>::type
+#else
+    typename boost::enable_if<boost::is_pod<T>, PreparedStatementBinder>::type
+#endif
+    operator<<(T val)
+    { PreparedStatementBinder ret(*this, 1); ret.bind(val); return ret; }
+
+    template <typename T>
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+    typename std::enable_if<!std::is_pod<T>::value, PreparedStatementBinder>::type
+#else
+    typename boost::disable_if<boost::is_pod<T>, PreparedStatementBinder>::type
+#endif
+    operator<<(const T& val)
+    { PreparedStatementBinder ret(*this, 1); ret.bind(val); return ret; }
 
     /** Reset the prepared statement object back to its initial state, ready
      * to be re-executed.

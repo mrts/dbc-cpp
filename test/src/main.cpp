@@ -63,6 +63,16 @@ public:
                     1);
         }
 
+        insert = _db.prepareStatement(
+                "INSERT INTO person (id, name, height) VALUES (?, ?, ?)");
+
+        *insert << 42 << "Douglas" << 1.65;
+
+        Test::assertEqual<int>(
+                "Binding with operator<< works",
+                insert->executeUpdate(),
+                1);
+
         dbc::PreparedStatement::ptr select = _db.prepareStatement(
                 "SELECT DISTINCT name FROM person "
                 "WHERE name LIKE ? ORDER BY name");
@@ -102,17 +112,17 @@ public:
         results->get(1, name);
 
         Test::assertEqual<std::string>(
-                "Gettings strings by reference works",
-                name, "Ervin");
+                "Getting strings by reference works",
+                name, "Douglas");
 
         // TODO: beware of double comparison
         Test::assertEqual<double>(
                 "Getting doubles works",
-                results->get<double>(2), 1.80);
+                results->get<double>(2), 1.65);
 
         Test::assertEqual<int>(
                 "Getting ints works",
-                results->get<int>(0), 1);
+                results->get<int>(0), 42);
 
         _db.executeUpdate("CREATE TABLE nullable (a INTEGER)");
         _db.executeUpdate("INSERT INTO nullable (a) VALUES (NULL)");
