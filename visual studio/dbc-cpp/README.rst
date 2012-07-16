@@ -27,6 +27,7 @@ follows:
 #. Open a Git Bash shell in ``..`` and run::
 
      boost-tools/bin/bcp --scan --boost=boost-dist ../include/dbccpp/*.h ../include/utilcpp/*.h boost
+     # or, alternatively bcp --boost=boost-dist type_traits smart_ptr bind boost
 
      mkdir boost/boost/config/{compiler,stdlib,platform}
 
