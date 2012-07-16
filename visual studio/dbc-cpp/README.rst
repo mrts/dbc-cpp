@@ -26,8 +26,8 @@ follows:
 
 #. Open a Git Bash shell in ``..`` and run::
 
-     boost-tools/bin/bcp --scan --boost=boost-dist ../include/dbccpp/*.h ../include/utilcpp/*.h boost
-     # or, alternatively: bcp --boost=boost-dist type_traits smart_ptr bind boost
+     boost-tools/bin/bcp --boost=boost-dist type_traits smart_ptr bind lambda boost
+     # or, alternatively: boost-tools/bin/bcp --scan --boost=boost-dist ../include/dbccpp/*.h ../include/utilcpp/*.h boost
 
      mkdir boost/boost/config/{compiler,stdlib,platform}
 
@@ -38,7 +38,14 @@ follows:
 
      mkdir -p boost/boost/mpl/aux_/preprocessed/plain
 
-     cp boost-dist/boost/mpl/aux_/preprocessed/plain/and.hpp boost/boost/mpl/aux_/preprocessed/plain
+     cp boost-dist/boost/mpl/aux_/preprocessed/plain/{and,or}.hpp boost/boost/mpl/aux_/preprocessed/plain
+
+     for source in `find boost-dist/boost/preprocessor/*/detail -type f`
+     do
+         target=${source/boost-dist/boost}
+         mkdir -vp `dirname "$target"`
+         cp -vr "$source" "$target"
+     done
 
 .. _`Boost`: http://www.boost.org/
 .. _`bcp`: http://www.boost.org/tools/bcp/index.html
