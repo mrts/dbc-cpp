@@ -1,4 +1,6 @@
 #include <testcpp/testcpp.h>
+#include <testcpp/StdOutView.h>
+
 #include <dbccpp/dbccpp.h>
 
 #include <vector>
@@ -286,6 +288,7 @@ private:
 int main()
 {
     Test::Controller &c = Test::Controller::instance();
+    c.setObserver(Test::observer_transferable_ptr(new Test::ColoredStdOutView));
     c.addTestSuite("dbccpp main", Test::Suite::instance<TestDbccpp>);
 
     return c.run();
