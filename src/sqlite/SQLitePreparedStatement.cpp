@@ -55,14 +55,14 @@ SQLitePreparedStatement::SQLitePreparedStatement(const std::string& sql,
     _param_tracker(sqlite3_bind_parameter_count(_statement.get()))
 {}
 
-ResultSet::ptr SQLitePreparedStatement::executeQuery()
+ResultSet::ptr SQLitePreparedStatement::doExecuteQuery()
 {
     checkParams();
 
     return ResultSet::ptr(new SQLiteResultSet(*this));
 }
 
-const CountProxy& SQLitePreparedStatement::executeUpdate()
+const CountProxy& SQLitePreparedStatement::doExecuteUpdate()
 {
     checkParams();
 
@@ -86,14 +86,14 @@ const CountProxy& SQLitePreparedStatement::executeUpdate()
     return count;
 }
 
-void SQLitePreparedStatement::clear()
+void SQLitePreparedStatement::doClear()
 {
     int ret = sqlite3_clear_bindings(_statement.get());
     if (ret != SQLITE_OK)
         throw SQLiteSqlError(_db, "sqlite3_clear_bindings() failed", getSQL());
 }
 
-void SQLitePreparedStatement::reset()
+void SQLitePreparedStatement::doReset()
 {
     // We have experienced SQLITE_BUSY errors here indicating that the
     // database is locked because of another ongoing operation. Increasing

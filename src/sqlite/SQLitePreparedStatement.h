@@ -27,12 +27,6 @@ public:
 
     virtual void setNull(int index);
 
-    virtual ResultSet::ptr executeQuery();
-    virtual const CountProxy& executeUpdate();
-
-    virtual void reset();
-    virtual void clear();
-
     virtual int getLastInsertId();
 
     virtual const char* getSQL() const;
@@ -48,6 +42,12 @@ protected:
     virtual void setInt(int parameterIndex, const int& val);
     virtual void setDouble(int parameterIndex, const double& val);
     virtual void setBool(int parameterIndex, const bool& value);
+
+    virtual ResultSet::ptr doExecuteQuery();
+    virtual const CountProxy& doExecuteUpdate();
+
+    virtual void doReset();
+    virtual void doClear();
 
 private:
     typedef utilcpp::scoped_ptr<sqlite3_stmt, finalize_sqlite3_stmt>
