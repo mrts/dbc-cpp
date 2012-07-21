@@ -150,11 +150,11 @@ public:
             ("Invalid statement throws SqlError",
              *this, &TestDbccpp::executeInvalidStatement);
 
-        Test::assertThrows<TestDbccpp, TestMethod, std::invalid_argument>
-            ("Unbound prepared statement throws std::invalid_argument",
+        Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
+            ("Unbound prepared statement throws SqlError",
              *this, &TestDbccpp::executeUnboundStatement);
 
-        Test::assertThrows<TestDbccpp, TestMethod, std::invalid_argument>
+        Test::assertThrows<TestDbccpp, TestMethod, dbc::SqlError>
             ("Unbound parameter throws std::invalid_argument",
              *this, &TestDbccpp::executeWithUnboundParameter);
 

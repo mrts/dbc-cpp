@@ -2,6 +2,7 @@
 #define PARAMETERTRACKERMIXIN_H__
 
 #include <stdexcept>
+#include <bitset>
 
 namespace dbc
 {
@@ -17,6 +18,8 @@ namespace dbc
 class ParameterTracker
 {
 public:
+    typedef std::bitset<sizeof(unsigned int) * 8> bitmask;
+
     ParameterTracker(unsigned int num_params) :
         _num_params(num_params),
         _set_params_tracker(0)
@@ -40,6 +43,12 @@ public:
         unsigned int num_params_mask = ~(~0U << _num_params);
         return ((_set_params_tracker & num_params_mask) == num_params_mask);
     }
+
+    unsigned int getNumParams()
+    { return _num_params; }
+
+    bitmask getSetParams()
+    { return bitmask(_set_params_tracker); }
 
 private:
     unsigned int _num_params;

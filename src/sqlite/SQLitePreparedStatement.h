@@ -5,8 +5,11 @@
 
 #include <dbccpp/PreparedStatement.h>
 #include <dbccpp/ParameterTracker.h>
+#include <dbccpp/DbExceptions.h>
 
 #include <utilcpp/scoped_ptr.h>
+
+#include <sstream>
 
 struct sqlite3_stmt;
 void finalize_sqlite3_stmt(sqlite3_stmt*);
@@ -53,8 +56,14 @@ private:
     inline void checkParams()
     {
         if (!_param_tracker.areAllParametersSet())
-            throw std::invalid_argument("Some prepared statement "
-                    "parameters haven't been set");
+        {
+            std::ostringstream params;
+            params << "Expected " << _param_tracker.getNumParams()
+                   << ", currently set: " << _param_tracker.getSetParams();
+
+            throw SqlError("Not all statement parameters are set",
+                    params.str(), getSQL());
+        }
     }
 
 	SQLiteConnection& _db;
