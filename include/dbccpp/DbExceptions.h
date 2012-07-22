@@ -13,10 +13,18 @@ class DbErrorBase : public std::runtime_error
 public:
     DbErrorBase(const std::string& msg) :
         std::runtime_error(msg)
-    {}
+    { }
 
     virtual ~DbErrorBase() throw()
-    {}
+    { }
+};
+
+class NoResultsError : public DbErrorBase
+{
+public:
+    NoResultsError(const std::string& msg) :
+        DbErrorBase(msg)
+    { }
 };
 
 class DbError : public DbErrorBase
@@ -27,10 +35,10 @@ public:
         DbErrorBase(already_prepared ? dberror : prepareMessage(msg, dberror)),
         message(msg),
         db_error(dberror)
-    {}
+    { }
 
     virtual ~DbError() throw()
-    {}
+    { }
 
     std::string message;
     std::string db_error;
@@ -53,10 +61,10 @@ public:
             const std::string& SQL) :
         DbError(msg, prepareMessage(msg, dberror, SQL), true),
         sql(SQL)
-    {}
+    { }
 
     virtual ~SqlError() throw()
-    {}
+    { }
 
     std::string sql;
 

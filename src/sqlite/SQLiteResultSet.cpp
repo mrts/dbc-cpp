@@ -54,8 +54,7 @@ bool SQLiteResultSet::isNull(const int columnIndex)
 void SQLiteResultSet::checkRowAndColumn(const int columnIndex)
 {
     if (_status != ROW_READY)
-        throw DbErrorBase("Attempt to access columns without "
-                "any rows in result set");
+        throw NoResultsError("No rows in result set");
 
     if (_numColumns < 0)
         // or use sqlite3_column_count in constructor
