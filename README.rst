@@ -79,7 +79,7 @@ Quick overview::
        std::string name = results[0];
 
        // or into an out parameter (by reference)
-       results->get<std::string>(0, name);
+       results.get<std::string>(0, name);
   }
 
 See `main test`_ for more details.
