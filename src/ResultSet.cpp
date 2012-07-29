@@ -4,33 +4,31 @@ namespace dbc
 {
 
 template <>
-int ResultSet::get(int columnIndex)
+int ResultSet::get(const int columnIndex) const
 {
     return getInt(columnIndex);
 }
 
 template <>
-double ResultSet::get(int columnIndex)
+double ResultSet::get(const int columnIndex) const
 {
     return getDouble(columnIndex);
 }
 
 template <>
-bool ResultSet::get(int columnIndex)
+bool ResultSet::get(const int columnIndex) const
 {
     return getBool(columnIndex);
 }
 
 template <>
-std::string ResultSet::get(int columnIndex)
+std::string ResultSet::get(const int columnIndex) const
 {
-    std::string ret;
-    getString(columnIndex, ret);
-    return ret;
+    return getString(columnIndex);
 }
 
 template <>
-void ResultSet::get(int columnIndex, std::string& out)
+void ResultSet::get(const int columnIndex, std::string& out) const
 {
     return getString(columnIndex, out);
 }

@@ -45,13 +45,13 @@ bool SQLiteResultSet::next()
     // return false; <-- unreachable and generates a compiler warning in VC 2008
 }
 
-bool SQLiteResultSet::isNull(const int columnIndex)
+bool SQLiteResultSet::isNull(const int columnIndex) const
 {
     checkRowAndColumn(columnIndex);
     return sqlite3_column_type(_statement.handle(), columnIndex) == SQLITE_NULL;
 }
 
-void SQLiteResultSet::checkRowAndColumn(const int columnIndex)
+void SQLiteResultSet::checkRowAndColumn(const int columnIndex) const
 {
     if (_status != ROW_READY)
         throw NoResultsError("No rows in result set");
@@ -72,7 +72,7 @@ void SQLiteResultSet::checkRowAndColumn(const int columnIndex)
     }
 }
 
-void SQLiteResultSet::getString(const int columnIndex, std::string& out)
+void SQLiteResultSet::getString(const int columnIndex, std::string& out) const
 {
     checkRowAndColumn(columnIndex);
 
@@ -82,21 +82,31 @@ void SQLiteResultSet::getString(const int columnIndex, std::string& out)
     out = result ? reinterpret_cast<const char *>(result) : "";
 }
 
-int SQLiteResultSet::getInt(const int columnIndex)
+std::string SQLiteResultSet::getString(const int columnIndex) const
+{
+    checkRowAndColumn(columnIndex);
+
+    const unsigned char* result = sqlite3_column_text(_statement.handle(),
+            columnIndex);
+
+    return result ? reinterpret_cast<const char *>(result) : "";
+}
+
+int SQLiteResultSet::getInt(const int columnIndex) const
 {
     checkRowAndColumn(columnIndex);
 
     return sqlite3_column_int(_statement.handle(), columnIndex);
 }
 
-bool SQLiteResultSet::getBool(const int columnIndex)
+bool SQLiteResultSet::getBool(const int columnIndex) const
 {
     checkRowAndColumn(columnIndex);
 
     return sqlite3_column_int(_statement.handle(), columnIndex) != 0;
 }
 
-double SQLiteResultSet::getDouble(const int columnIndex)
+double SQLiteResultSet::getDouble(const int columnIndex) const
 {
     checkRowAndColumn(columnIndex);
 

@@ -114,28 +114,28 @@ const char* SQLitePreparedStatement::getSQL() const
     return sqlite3_sql(_statement.get());
 }
 
-void SQLitePreparedStatement::setInt(int index, const int& value)
+void SQLitePreparedStatement::setInt(const int index, const int value)
 {
     _param_tracker.setParameter(index);
     int ret = sqlite3_bind_int(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
 }
 
-void SQLitePreparedStatement::setBool(int index, const bool& value)
+void SQLitePreparedStatement::setBool(const int index, const bool value)
 {
     _param_tracker.setParameter(index);
     int ret = sqlite3_bind_int(_statement.get(), index, value ? 1 : 0);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
 }
 
-void SQLitePreparedStatement::setDouble(int index, const double& value)
+void SQLitePreparedStatement::setDouble(const int index, const double value)
 {
     _param_tracker.setParameter(index);
     int ret = sqlite3_bind_double(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_double", value);
 }
 
-void SQLitePreparedStatement::setString(int index, const std::string& value)
+void SQLitePreparedStatement::setString(const int index, const std::string& value)
 {
     _param_tracker.setParameter(index);
     // Note that SQLITE_TRANSIENT makes copy of the data.
@@ -147,7 +147,7 @@ void SQLitePreparedStatement::setString(int index, const std::string& value)
             (value.length() < 50 ? value : value.substr(0, 47) + "..."));
 }
 
-void SQLitePreparedStatement::setNull(int index)
+void SQLitePreparedStatement::setNull(const int index)
 {
     _param_tracker.setParameter(index);
     int ret = sqlite3_bind_null(_statement.get(), index);

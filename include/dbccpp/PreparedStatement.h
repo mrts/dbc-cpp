@@ -64,7 +64,7 @@ public:
 #else
     typename boost::enable_if<boost::is_pod<T>, void>::type
 #endif
-    set(int parameterIndex, T val);
+    set(const int parameterIndex, const T val);
 
     template <typename T>
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
@@ -72,13 +72,13 @@ public:
 #else
     typename boost::disable_if<boost::is_pod<T>, void>::type
 #endif
-    set(int parameterIndex, const T& val);
+    set(const int parameterIndex, const T& val);
 
     /** Bind null to the prepared statement.
      *
      * @throw DbException
      */
-    virtual void setNull(int parameterIndex) = 0;
+    virtual void setNull(const int parameterIndex) = 0;
 
     /** A convenient ostream-like wrapper around set() for binding values
      * to the prepared statement in one go. E.g. binding values to statement
@@ -103,7 +103,7 @@ public:
 #else
     typename boost::enable_if<boost::is_pod<T>, PreparedStatement&>::type
 #endif
-    operator<<(T val)
+    operator<<(const T val)
     { set(++_operator_shift_count, val); return *this; }
 
     template <typename T>
@@ -201,10 +201,10 @@ protected:
     { }
 
     // NVI for set()
-    virtual void setString(int parameterIndex, const std::string& val) = 0;
-    virtual void setInt(int parameterIndex, const int& val) = 0;
-    virtual void setDouble(int parameterIndex, const double& val) = 0;
-    virtual void setBool(int parameterIndex, const bool& value) = 0;
+    virtual void setString(const int parameterIndex, const std::string& val) = 0;
+    virtual void setInt(const int parameterIndex, const int val) = 0;
+    virtual void setDouble(const int parameterIndex, const double val) = 0;
+    virtual void setBool(const int parameterIndex, const bool value) = 0;
 
     // NVI for actual operations
     virtual void doReset() = 0;

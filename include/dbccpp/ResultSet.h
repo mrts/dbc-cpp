@@ -54,7 +54,7 @@ public:
      * Checking for null works correctly *only before* the column is accessed
      * with get().
      */
-    virtual bool isNull(int columnIndex) = 0;
+    virtual bool isNull(const int columnIndex) const = 0;
 
     /** Retrieves the value of the designated column in the current row of
      * this ResultSet object.
@@ -63,17 +63,18 @@ public:
      * use isNull() for explicit NULL checking.
      */
     template <typename T>
-    T get(int columnIndex);
+    T get(const int columnIndex) const;
 
     template <typename T>
-    void get(int columnIndex, T& out);
+    void get(const int columnIndex, T& out) const;
 
 protected:
     // NVI for get()
-    virtual void getString(int columnIndex, std::string& out) = 0;
-    virtual int getInt(int columnIndex) = 0;
-    virtual double getDouble(int columnIndex) = 0;
-    virtual bool getBool(int columnIndex) = 0;
+    virtual void getString(const int columnIndex, std::string& out) const = 0;
+    virtual std::string getString(const int columnIndex) const = 0;
+    virtual int getInt(const int columnIndex) const = 0;
+    virtual double getDouble(const int columnIndex) const = 0;
+    virtual bool getBool(const int columnIndex) const = 0;
 };
 
 }

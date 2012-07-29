@@ -20,20 +20,21 @@ public:
     {}
 
     virtual bool next();
-    virtual bool isNull(int columnIndex);
+    virtual bool isNull(const int columnIndex) const;
 
 protected:
-    virtual void getString(int columnIndex, std::string& out);
-    virtual int getInt(int columnIndex);
-    virtual double getDouble(int columnIndex);
-    virtual bool getBool(int columnIndex);
+    virtual void getString(const int columnIndex, std::string& out) const;
+    virtual std::string getString(const int columnIndex) const;
+    virtual int getInt(const int columnIndex) const;
+    virtual double getDouble(const int columnIndex) const;
+    virtual bool getBool(const int columnIndex) const;
 
 private:
-    inline void checkRowAndColumn(const int columnIndex);
+    inline void checkRowAndColumn(const int columnIndex) const;
 
     SQLitePreparedStatement& _statement;
     Status _status;
-    int _numColumns;
+    mutable int _numColumns;
 };
 
 }

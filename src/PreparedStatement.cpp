@@ -4,23 +4,23 @@ namespace dbc
 {
 
 template<>
-void PreparedStatement::set<int>(int parameterIndex, int val)
+void PreparedStatement::set<int>(const int parameterIndex, const int val)
 { setInt(parameterIndex, val); }
 
 template<>
-void PreparedStatement::set<bool>(int parameterIndex, bool val)
+void PreparedStatement::set<bool>(const int parameterIndex, const bool val)
 { setBool(parameterIndex, val); }
 
 template<>
-void PreparedStatement::set<double>(int parameterIndex, double val)
+void PreparedStatement::set<double>(const int parameterIndex, const double val)
 { setDouble(parameterIndex, val); }
 
 template<>
-void PreparedStatement::set(int parameterIndex, const char* val)
+void PreparedStatement::set(const int parameterIndex, const char* val)
 { setString(parameterIndex, val); }
 
 template<>
-void PreparedStatement::set<std::string>(int parameterIndex,
+void PreparedStatement::set<std::string>(const int parameterIndex,
         const std::string& val)
 { setString(parameterIndex, val); }
 
