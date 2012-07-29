@@ -58,7 +58,7 @@ Quick overview::
   // use prepared statements and argument binding for DML statements
   dbc::PreparedStatement::ptr insert = db.prepareStatement("INSERT INTO "
             "person (name) VALUES (?)");
-  insert->set(1, "Ervin");
+  insert << "Ervin"; // or insert->set(1, "Ervin");
 
   // DML statements return number of updated rows
   assert(insert->executeUpdate() == 1);
@@ -66,16 +66,17 @@ Quick overview::
   // use prepared statements and argument binding for queries
   dbc::PreparedStatement::ptr select = db.prepareStatement("SELECT DISTINCT "
           "name FROM person WHERE name LIKE ? ORDER BY name");
-  select->set(1, "%vin");
+  select << "%vin";
 
   // queries return result sets
-  dbc::ResultSet::ptr results = select->executeQuery();
+  dbc::ResultSet::ptr results_ptr = select->executeQuery();
+  dbc::ResultSet& results = *results_ptr;
 
   // use next() to fetch and iterate over results
-  while (results->next())
+  while (results.next())
   {
-       // get strings by copy
-       std::string name = results->get<std::string>(0);
+       // get strings by copy (recommended, rely on RVO)
+       std::string name = results[0];
 
        // or into an out parameter (by reference)
        results->get<std::string>(0, name);
