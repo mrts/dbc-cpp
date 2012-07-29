@@ -5,5 +5,6 @@
 #include <dbccpp/DbExceptions.h>
 #include <dbccpp/PreparedStatement.h>
 #include <dbccpp/ResultSet.h>
+#include <dbccpp/SubscriptProxy.h>
 
 #endif /* DBCCPP_H */

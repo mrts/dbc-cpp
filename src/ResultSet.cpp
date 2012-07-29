@@ -1,4 +1,5 @@
 #include <dbccpp/ResultSet.h>
+#include <dbccpp/SubscriptProxy.h>
 
 namespace dbc
 {
@@ -31,6 +32,11 @@ template <>
 void ResultSet::get(const int columnIndex, std::string& out) const
 {
     return getString(columnIndex, out);
+}
+
+const SubscriptProxy ResultSet::operator[] (const int index) const
+{
+    return SubscriptProxy(*this, index);
 }
 
 }

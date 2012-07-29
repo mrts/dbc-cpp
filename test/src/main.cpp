@@ -33,6 +33,8 @@ public:
     void test()
     {
         testHappyPath();
+        // testPreparedStatementOperatorShift();
+        testResultsetSubscriptOperator();
         testInvalidQueries();
     }
 
@@ -136,6 +138,28 @@ public:
         Test::assertTrue(
                 "Null checking returns true for NULL values",
                 results->isNull(0));
+    }
+
+    void testResultsetSubscriptOperator()
+    {
+        dbc::PreparedStatement::ptr select =
+            _db.prepareStatement("SELECT * FROM person ORDER BY name");
+        dbc::ResultSet::ptr results_ptr = select->executeQuery();
+        dbc::ResultSet& results = *results_ptr;
+
+        results.next();
+
+        Test::assertEqual<int>(
+                "Getting ints by subscript operator works",
+                results[0], 42);
+
+        Test::assertEqual<std::string>(
+                "Getting strings by subscript operator works",
+                results[1], "Douglas");
+
+        Test::assertEqual<double>(
+                "Getting doubles by subscript operator works",
+                results[2], 1.65);
     }
 
     void testInvalidQueries()

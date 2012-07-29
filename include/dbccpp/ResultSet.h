@@ -23,6 +23,8 @@
 namespace dbc
 {
 
+class SubscriptProxy;
+
 /** Interface for representing query result sets. Resembles JDBC ResultSets,
  * but does not support updates.
  *
@@ -68,7 +70,11 @@ public:
     template <typename T>
     void get(const int columnIndex, T& out) const;
 
+    const SubscriptProxy operator[] (const int index) const;
+
 protected:
+    friend class SubscriptProxy;
+
     // NVI for get()
     virtual void getString(const int columnIndex, std::string& out) const = 0;
     virtual std::string getString(const int columnIndex) const = 0;
