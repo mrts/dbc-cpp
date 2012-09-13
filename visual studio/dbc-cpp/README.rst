@@ -39,7 +39,7 @@ follows:
 
      mkdir -p boost/boost/mpl/aux_/preprocessed/plain
 
-     cp boost-dist/boost/mpl/aux_/preprocessed/plain/{and,or}.hpp boost/boost/mpl/aux_/preprocessed/plain
+     cp -r boost-dist/boost/mpl/aux_/preprocessed/plain boost/boost/mpl/aux_/preprocessed
 
      for source in `find boost-dist/boost/preprocessor/*/detail -type f`
      do
