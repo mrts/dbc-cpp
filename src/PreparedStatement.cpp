@@ -16,7 +16,11 @@ void PreparedStatement::set<double>(const int parameterIndex, const double val)
 { setDouble(parameterIndex, val); }
 
 template<>
-void PreparedStatement::set(const int parameterIndex, const char* val)
+void PreparedStatement::set<const char*>(const int parameterIndex, const char* const val)
+{ setString(parameterIndex, val); }
+
+template<>
+void PreparedStatement::set<const char* const>(const int parameterIndex, const char* const val)
 { setString(parameterIndex, val); }
 
 template<>

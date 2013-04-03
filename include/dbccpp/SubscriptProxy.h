@@ -6,6 +6,7 @@
 namespace dbc
 {
 
+#pragma warning(disable:4512)//warning C4512: 'SubscriptProxy' : assignment operator could not be generated - because of const member variables.
 class SubscriptProxy
 {
 public:
@@ -29,6 +30,7 @@ private:
     const ResultSet& _results;
     const int _index;
 };
+#pragma warning(default:4512)
 
 }
 
