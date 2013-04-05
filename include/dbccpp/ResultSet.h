@@ -77,8 +77,11 @@ protected:
 
     // NVI for get()
     virtual void getString(const int columnIndex, std::string& out) const = 0;
-    virtual std::string getString(const int columnIndex) const = 0;
+	virtual void getWString(const int columnIndex, std::wstring& out) const = 0;
+	virtual std::string getString(const int columnIndex) const = 0;
+	virtual std::wstring getWString(const int columnIndex) const = 0;
     virtual int getInt(const int columnIndex) const = 0;
+	virtual __int64 getInt64(const int columnIndex) const = 0;
     virtual double getDouble(const int columnIndex) const = 0;
     virtual bool getBool(const int columnIndex) const = 0;
 };

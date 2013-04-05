@@ -191,7 +191,7 @@ public:
      */
     // FIXME: this should be a 64-bit type really
     // FIXME: information is SQLite-specific
-    virtual int getLastInsertId() = 0;
+	virtual __int64 getLastInsertId() = 0;
 
     /** Get the underlying SQL statement. */
     virtual const char* getSQL() const = 0;
@@ -203,7 +203,9 @@ protected:
 
     // NVI for set()
     virtual void setString(const int parameterIndex, const std::string& val) = 0;
+	virtual void setWString(const int parameterIndex, const std::wstring& val) = 0;
     virtual void setInt(const int parameterIndex, const int val) = 0;
+	virtual void setInt64(const int parameterIndex, const __int64 val) = 0;
     virtual void setDouble(const int parameterIndex, const double val) = 0;
     virtual void setBool(const int parameterIndex, const bool value) = 0;
 

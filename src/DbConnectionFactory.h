@@ -25,9 +25,6 @@ public:
     typedef dbconnection_transferable_ptr (*CreateDbConnectionCallback)(const std::string&);
     typedef std::map<std::string, CreateDbConnectionCallback> CallbackMap;
 
-    bool registerDbConnectionCreator(const std::string& driverName,
-            CreateDbConnectionCallback creator);
-
     dbconnection_transferable_ptr createDbConnection(const std::string& driverName,
             const std::string& params);
 

@@ -7,6 +7,7 @@ namespace dbc
 {
 
 #pragma warning(disable:4512)//warning C4512: 'SubscriptProxy' : assignment operator could not be generated - because of const member variables.
+
 class SubscriptProxy
 {
 public:
@@ -17,6 +18,9 @@ public:
     operator int () const
     { return _results.getInt(_index); }
 
+	operator __int64 () const
+    { return _results.getInt64(_index); }
+
     operator double () const
     { return _results.getDouble(_index); }
 
@@ -26,12 +30,14 @@ public:
     operator std::string () const
     { return _results.getString(_index); }
 
+	operator std::wstring () const
+    { return _results.getWString(_index); }
+
 private:
     const ResultSet& _results;
     const int _index;
 };
 #pragma warning(default:4512)
-
 }
 
 #endif /* SUBSCRIPTPROXY_H */
