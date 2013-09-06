@@ -10,7 +10,7 @@ void finalize_sqlite3(sqlite3* db)
 {
     // As destructors cannot throw, we cannot handle the case when ret != OK
     if (db)
-        sqlite3_close(db);
+        sqlite3_close_v2(db);
 }
 
 namespace dbc
