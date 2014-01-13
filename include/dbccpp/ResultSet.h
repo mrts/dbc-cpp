@@ -3,10 +3,11 @@
 
 #include <utilcpp/declarations.h>
 #include <dbccpp/DbExceptions.h>
+#include <dbccpp/detect_cpp11.h>
 
 #include <string>
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+#ifdef DBCCPP_HAVE_CPP11
   #include <memory>
   namespace dbc
   {

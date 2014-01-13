@@ -4,10 +4,11 @@
 #include <dbccpp/ResultSet.h>
 #include <dbccpp/CountProxy.h>
 #include <utilcpp/declarations.h>
+#include <dbccpp/detect_cpp11.h>
 
 #include <string>
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+#ifdef DBCCPP_HAVE_CPP11
   #include <memory>
   #include <type_traits>
   namespace dbc
@@ -59,7 +60,7 @@ public:
      * @throw DbException
      */
     template <typename T>
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+#ifdef DBCCPP_HAVE_CPP11
     typename std::enable_if<std::is_pod<T>::value, void>::type
 #else
     typename boost::enable_if<boost::is_pod<T>, void>::type
@@ -67,7 +68,7 @@ public:
     set(const int parameterIndex, const T val);
 
     template <typename T>
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+#ifdef DBCCPP_HAVE_CPP11
     typename std::enable_if<!std::is_pod<T>::value, void>::type
 #else
     typename boost::disable_if<boost::is_pod<T>, void>::type
@@ -98,7 +99,7 @@ public:
      * @throw DbException
      */
     template <typename T>
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+#ifdef DBCCPP_HAVE_CPP11
     typename std::enable_if<std::is_pod<T>::value, PreparedStatement&>::type
 #else
     typename boost::enable_if<boost::is_pod<T>, PreparedStatement&>::type
@@ -107,7 +108,7 @@ public:
     { set(++_operator_shift_count, val); return *this; }
 
     template <typename T>
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
+#ifdef DBCCPP_HAVE_CPP11
     typename std::enable_if<!std::is_pod<T>::value, PreparedStatement&>::type
 #else
     typename boost::disable_if<boost::is_pod<T>, PreparedStatement&>::type
