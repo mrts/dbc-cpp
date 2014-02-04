@@ -24,8 +24,11 @@ public:
 
 protected:
     virtual void getString(const int columnIndex, std::string& out) const;
+	virtual void getWString(const int columnIndex, std::wstring& out) const;
     virtual std::string getString(const int columnIndex) const;
+	virtual std::wstring getWString(const int columnIndex) const;
     virtual int getInt(const int columnIndex) const;
+	virtual __int64 getInt64(const int columnIndex) const;	
     virtual double getDouble(const int columnIndex) const;
     virtual bool getBool(const int columnIndex) const;
 

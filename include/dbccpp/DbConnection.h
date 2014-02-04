@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DBCCPP_DBCONNECTION_H__
 #define DBCCPP_DBCONNECTION_H__
 
@@ -5,7 +7,6 @@
 #include <dbccpp/CountProxy.h>
 #include <utilcpp/declarations.h>
 
-#include <string>
 
 namespace dbc
 {

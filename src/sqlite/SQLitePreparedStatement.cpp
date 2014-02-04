@@ -38,12 +38,30 @@ sqlite3_stmt* init_statement(dbc::SQLiteConnection& db, const std::string& sql)
 namespace dbc
 {
 
+#include <xstring>
+	std::string toMBStr(std::wstring const& str)
+	{
+		std::string mbstr( str.size(), 0 );
+		size_t res;
+		wcstombs_s(&res, &mbstr[0], mbstr.size(), &str[0], str.size() );
+		return mbstr;
+	}
+
+
 #define THROW_IF_SET_STMT_NOT_OK(retval, func_name, val) \
     if (retval != SQLITE_OK) \
     { \
         std::ostringstream err; \
         err << func_name "(" << index << ", " << val << ") failed"; \
         throw SQLiteSqlError(_db, err.str(), getSQL()); \
+    }
+
+#define THROW_IF_SET_STMT_NOT_OK_W(retval, func_name, val) \
+    if (retval != SQLITE_OK) \
+    { \
+        std::wostringstream err; \
+        err << func_name L"(" << index << L", " << val << L") failed"; \
+        throw SQLiteSqlError(_db, toMBStr(err.str()), getSQL()); \
     }
 
 // sql has to be UTF-8
@@ -104,9 +122,9 @@ void SQLitePreparedStatement::doReset()
         throw SQLiteSqlError(_db, "sqlite3_reset() failed", getSQL());
 }
 
-int SQLitePreparedStatement::getLastInsertId()
+__int64 SQLitePreparedStatement::getLastInsertId()
 {
-    return static_cast<int>(sqlite3_last_insert_rowid(_db.handle()));
+    return static_cast<__int64>(sqlite3_last_insert_rowid(_db.handle()));
 }
 
 const char* SQLitePreparedStatement::getSQL() const
@@ -119,6 +137,13 @@ void SQLitePreparedStatement::setInt(const int index, const int value)
     _param_tracker.setParameter(index);
     int ret = sqlite3_bind_int(_statement.get(), index, value);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int", value);
+}
+
+void SQLitePreparedStatement::setInt64(const int index, const __int64 value)
+{
+    _param_tracker.setParameter(index);
+    int ret = sqlite3_bind_int64(_statement.get(), index, value);
+    THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_int64", value);
 }
 
 void SQLitePreparedStatement::setBool(const int index, const bool value)
@@ -145,6 +170,18 @@ void SQLitePreparedStatement::setString(const int index, const std::string& valu
             value.c_str(), -1, SQLITE_TRANSIENT);
     THROW_IF_SET_STMT_NOT_OK(ret, "sqlite3_bind_text",
             (value.length() < 50 ? value : value.substr(0, 47) + "..."));
+}
+
+void SQLitePreparedStatement::setWString(const int index, const std::wstring& value)
+{
+    _param_tracker.setParameter(index);
+    // Note that SQLITE_TRANSIENT makes copy of the data.
+    // This may be expensive if it is large.
+
+    int ret = sqlite3_bind_text16(_statement.get(), index,
+            value.c_str(), -1, SQLITE_TRANSIENT);
+    THROW_IF_SET_STMT_NOT_OK_W(ret, L"sqlite3_bind_text16",
+            (value.length() < 50 ? value : value.substr(0, 47) + L"..."));
 }
 
 void SQLitePreparedStatement::setNull(const int index)

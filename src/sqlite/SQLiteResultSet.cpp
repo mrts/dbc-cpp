@@ -92,11 +92,38 @@ std::string SQLiteResultSet::getString(const int columnIndex) const
     return result ? reinterpret_cast<const char *>(result) : "";
 }
 
+void SQLiteResultSet::getWString(const int columnIndex, std::wstring& out) const
+{
+    checkRowAndColumn(columnIndex);
+
+    const void* result = sqlite3_column_text16(_statement.handle(),
+            columnIndex);
+
+    out = result ? reinterpret_cast<const wchar_t *>(result) : L"";
+}
+
+std::wstring SQLiteResultSet::getWString(const int columnIndex) const
+{
+    checkRowAndColumn(columnIndex);
+
+    const void* result = sqlite3_column_text16(_statement.handle(),
+            columnIndex);
+
+    return result ? reinterpret_cast<const wchar_t *>(result) : L"";
+}
+
 int SQLiteResultSet::getInt(const int columnIndex) const
 {
     checkRowAndColumn(columnIndex);
 
     return sqlite3_column_int(_statement.handle(), columnIndex);
+}
+
+__int64 SQLiteResultSet::getInt64(const int columnIndex) const
+{
+    checkRowAndColumn(columnIndex);
+
+    return sqlite3_column_int64(_statement.handle(), columnIndex);
 }
 
 bool SQLiteResultSet::getBool(const int columnIndex) const

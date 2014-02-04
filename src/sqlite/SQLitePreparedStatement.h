@@ -27,7 +27,7 @@ public:
 
     virtual void setNull(const int index);
 
-    virtual int getLastInsertId();
+    virtual __int64 getLastInsertId();
 
     virtual const char* getSQL() const;
 
@@ -39,7 +39,10 @@ public:
 
 protected:
     virtual void setString(const int parameterIndex, const std::string& val);
+	virtual void setWString(const int parameterIndex, const std::wstring& val);
+	//virtual void setString(const int parameterIndex, const CString& val);
     virtual void setInt(const int parameterIndex, const int val);
+	virtual void setInt64(const int parameterIndex, const __int64 val);
     virtual void setDouble(const int parameterIndex, const double val);
     virtual void setBool(const int parameterIndex, const bool value);
 
