@@ -5,6 +5,98 @@
 
 #include <vector>
 
+class TestDbccppMysql : public Test::Suite
+{
+public:
+    TestDbccppMysql() : _db((dbc::DbConnection::connect("mysql", "test.db"),
+        dbc::DbConnection::instance()))
+    {
+        _db.executeUpdate("DROP TABLE IF EXISTS person");
+        _db.executeUpdate("CREATE TABLE person ( "
+                          "id INTEGER PRIMARY KEY auto_increment, "
+                          "name TEXT NOT NULL, "
+                          "height float NOT NULL DEFAULT 1.80 "
+                          ")");
+    }
+
+    virtual void test() {
+        testHappyPath();
+    }
+
+    void testHappyPath()
+    {
+        Test::assertEqual<int>("DDL statements return 0",
+                _db.executeUpdate("CREATE TABLE test "
+                                  "(id INTEGER PRIMARY KEY auto_increment)"),
+                0);
+        Test::assertEqual<int>("DDL statements return 0",
+                _db.executeUpdate("DROP TABLE test"),
+                0);
+
+        dbc::PreparedStatement::ptr insert = _db.prepareStatement(
+                "INSERT INTO person (name) VALUES (?)");
+
+        std::vector<std::string> names;
+        names.push_back("Ervin");
+        names.push_back("Melvin");
+        names.push_back("Kelvin");
+        names.push_back("Steve");
+
+        for (size_t i = 0; i < names.size(); ++i)
+        {
+            insert->set(1, names[i]);
+
+            Test::assertEqual<int>(
+                    "DML statements return number of updated rows",
+                    insert->executeUpdate(),
+                    1);
+        }
+
+        insert = _db.prepareStatement(
+                "INSERT INTO person (id, name, height) VALUES (?, ?, ?)");
+
+        *insert << 42 << "Douglas" << 1.65;
+
+        Test::assertEqual<int>(
+                "Binding with operator<< works",
+                insert->executeUpdate(),
+                1);
+
+        dbc::PreparedStatement::ptr select = _db.prepareStatement(
+                "SELECT DISTINCT name FROM person "
+                "WHERE name LIKE ? ORDER BY name");
+        select->set(1, "%vin");
+
+        std::vector<std::string> expected;
+        expected.push_back("Ervin");
+        expected.push_back("Kelvin");
+        expected.push_back("Melvin");
+
+        dbc::ResultSet::ptr results = select->executeQuery();
+
+        unsigned int counter = 0;
+
+        while (results->next())
+        {
+            // access strings by copy
+            Test::assertEqual<std::string>(
+                    "Accessing rows and columns in ResultSet works (str copy)",
+                    results->get<std::string>(0), expected.at(counter++));
+        }
+    }
+
+    virtual ~TestDbccppMysql()
+    {
+        _db.executeUpdate("DROP TABLE IF EXISTS person");
+        _db.executeUpdate("DROP TABLE IF EXISTS test");
+        _db.executeUpdate("DROP TABLE IF EXISTS nullable");
+        _db.disconnect();
+    }
+
+private:
+    dbc::DbConnection& _db;
+};
+
 class TestDbccpp : public Test::Suite
 {
 public:
@@ -28,6 +120,7 @@ public:
         _db.executeUpdate("DROP TABLE IF EXISTS person");
         _db.executeUpdate("DROP TABLE IF EXISTS test");
         _db.executeUpdate("DROP TABLE IF EXISTS nullable");
+        _db.disconnect();
     }
 
     void test()
@@ -313,7 +406,7 @@ int main()
 {
     Test::Controller &c = Test::Controller::instance();
     c.setObserver(Test::observer_transferable_ptr(new Test::ColoredStdOutView));
+    c.addTestSuite("dbccpp-MySQL", Test::Suite::instance<TestDbccppMysql>);
     c.addTestSuite("dbccpp main", Test::Suite::instance<TestDbccpp>);
-
-    return c.run();
+    c.run();
 }

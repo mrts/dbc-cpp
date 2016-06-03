@@ -1,6 +1,7 @@
 #include "DbConnectionFactory.h"
 #include <dbccpp/DbExceptions.h>
 #include "sqlite/SQLiteConnection.h"
+#include "mysql/MySQLConnection.h"
 
 namespace dbc
 {
@@ -10,11 +11,17 @@ dbconnection_transferable_ptr createSQLiteConnection(const std::string& params)
     return dbconnection_transferable_ptr(new SQLiteConnection(params));
 }
 
+dbconnection_transferable_ptr createMySQLConnection(const std::string& params)
+{
+    return dbconnection_transferable_ptr(new MySQLConnection(params));
+}
+
 DbConnectionFactory::DbConnectionFactory() :
     _callbacks_registry()
 {
     // see doc/README-factory.rst why this unneccessary coupling is needed
     _callbacks_registry["sqlite"] = createSQLiteConnection;
+    _callbacks_registry["mysql"] = createMySQLConnection;
 }
 
 dbconnection_transferable_ptr DbConnectionFactory::createDbConnection(const std::string& driverName,

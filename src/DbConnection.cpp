@@ -10,14 +10,16 @@
 namespace dbc
 {
 
-std::string DbConnection::_driver;
-std::string DbConnection::_params;
-
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || (__cplusplus > 199711L)
   typedef std::unique_ptr<DbConnection> dbconnection_scoped_ptr;
 #else
   typedef utilcpp::scoped_ptr<DbConnection> dbconnection_scoped_ptr;
 #endif
+
+std::string DbConnection::_driver;
+std::string DbConnection::_params;
+
+static dbconnection_scoped_ptr instanceObj;
 
 void DbConnection::connect(const std::string& driver, const std::string& params)
 {
@@ -29,20 +31,25 @@ void DbConnection::connect(const std::string& driver, const std::string& params)
 }
 
 DbConnection& DbConnection::instance()
-{
-    static dbconnection_scoped_ptr instance;
-
-    if (!instance)
+{    
+    if (!instanceObj)
     {
         if (_driver.empty())
             throw DbErrorBase("connect() has to be called before instance()");
 
-        instance = DbConnectionFactory::instance().createDbConnection(_driver, _params);
-        if (!instance)
+        instanceObj = DbConnectionFactory::instance().createDbConnection(_driver, _params);
+        if (!instanceObj)
             throw DbErrorBase("Null instance returned from driver factory");
     }
 
-    return *instance;
+    return *instanceObj;
+}
+
+void DbConnection::disconnect()
+{
+    instanceObj.reset();
+    _driver = "";
+    _params = "";
 }
 
 }
