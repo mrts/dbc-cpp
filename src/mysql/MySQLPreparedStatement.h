@@ -23,16 +23,20 @@
 namespace dbc
 {
 
+class MySQLResultSet;
+
 void finalize_mysql_stmt(MYSQL_STMT*);
 
 class MySQLPreparedStatement : public PreparedStatement
 {
+    friend class MySQLResultSet;
     // PreparedStatement interface
 public:
     MySQLPreparedStatement(const std::string& sql, MySQLConnection& db);
     void setNull(const int parameterIndex);
-    int getLastInsertId(){return -1;};
+    uint64_t getLastInsertId();
     const char *getSQL() const;
+    MYSQL_STMT* handle();
 
 protected:
     void setString(const int parameterIndex, const std::string &val);
@@ -44,14 +48,22 @@ protected:
     ResultSet::ptr doExecuteQuery();
     const CountProxy &doExecuteUpdate();
 
+//methods
 private:
-    typedef utilcpp::scoped_ptr<MYSQL_STMT, finalize_mysql_stmt> mysqk_stmt_scoped_ptr;
+    void tryExecuteStatement();
+    void tryBindInput();
+
+//fields
+private:
+    typedef utilcpp::scoped_ptr<MYSQL_STMT, finalize_mysql_stmt> mysql_stmt_scoped_ptr;
     MySQLConnection& _db;
-    mysqk_stmt_scoped_ptr _statement;
+    mysql_stmt_scoped_ptr _statement;
     ParameterTracker _param_tracker;
-    std::vector<MYSQL_BIND> _bind_params;
+    std::vector<MYSQL_BIND> _input_bind_params;
+    std::vector<MYSQL_BIND> _output_bind_params;
     std::string _sql;
-    std::vector<std::vector<uint8_t> > _buffers;
+    std::vector<std::vector<uint8_t> > _inputBuffers;
+    std::vector<std::vector<std::vector<uint8_t> > > _outputBuffers;
 };
 
 }

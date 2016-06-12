@@ -23,6 +23,10 @@ public:
             const std::string& msg, const std::string& sql) :
         SqlError(msg, mysql_error(db.handle()), sql)
     { }
+    MySQLSqlError(MYSQL_STMT *stmt,
+            const std::string& msg, const std::string& sql) :
+        SqlError(msg, mysql_stmt_error(stmt), sql)
+    { }
 };
 
 }

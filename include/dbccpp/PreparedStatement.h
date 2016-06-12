@@ -191,7 +191,7 @@ public:
      */
     // FIXME: this should be a 64-bit type really
     // FIXME: information is SQLite-specific
-    virtual int getLastInsertId() = 0;
+    virtual u_int64_t getLastInsertId() = 0;
 
     /** Get the underlying SQL statement. */
     virtual const char* getSQL() const = 0;

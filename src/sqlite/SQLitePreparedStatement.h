@@ -27,7 +27,7 @@ public:
 
     virtual void setNull(const int index);
 
-    virtual int getLastInsertId();
+    virtual u_int64_t getLastInsertId();
 
     virtual const char* getSQL() const;
 

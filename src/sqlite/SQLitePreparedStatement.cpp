@@ -104,7 +104,7 @@ void SQLitePreparedStatement::doReset()
         throw SQLiteSqlError(_db, "sqlite3_reset() failed", getSQL());
 }
 
-int SQLitePreparedStatement::getLastInsertId()
+uint64_t SQLitePreparedStatement::getLastInsertId()
 {
     return static_cast<int>(sqlite3_last_insert_rowid(_db.handle()));
 }

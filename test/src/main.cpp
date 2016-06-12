@@ -83,6 +83,46 @@ public:
                     "Accessing rows and columns in ResultSet works (str copy)",
                     results->get<std::string>(0), expected.at(counter++));
         }
+
+        Test::assertEqual<int>(
+                "Iteration over result set returns all rows",
+                counter, expected.size());
+
+        select  = _db.prepareStatement("SELECT * FROM person ORDER BY name");
+        results = select->executeQuery();
+        results->next();
+
+        Test::assertTrue(
+                "Null checking returns false for non-NULL values",
+                !results->isNull(1));
+
+        // access strings by out parameter
+        std::string name;
+        results->get(1, name);
+
+        Test::assertEqual<std::string>(
+                "Getting strings by reference works",
+                name, "Douglas");
+
+        // TODO: beware of double comparison
+        Test::assertEqual<double>(
+                "Getting doubles works",
+                results->get<double>(2), 1.65);
+
+        Test::assertEqual<int>(
+                "Getting ints works",
+                results->get<int>(0), 42);
+
+        _db.executeUpdate("CREATE TABLE nullable (a INTEGER)");
+        _db.executeUpdate("INSERT INTO nullable (a) VALUES (NULL)");
+
+        select  = _db.prepareStatement("SELECT * FROM nullable");
+        results = select->executeQuery();
+        results->next();
+
+        Test::assertTrue(
+                "Null checking returns true for NULL values",
+                results->isNull(0));
     }
 
     virtual ~TestDbccppMysql()
