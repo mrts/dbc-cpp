@@ -25,12 +25,16 @@ bool dbc::MySQLResultSet::next()
 
 bool dbc::MySQLResultSet::isNull(const int columnIndex) const
 {
+    std::vector<std::vector<uint8_t> > &buff =_statement._outputBuffers[columnIndex];
 
+    my_bool *val = (my_bool*)buff[3].data();
+    return *val;
 }
 
 void dbc::MySQLResultSet::getString(const int columnIndex, std::string &out) const
 {
-
+    std::vector<std::vector<uint8_t> > &buff =_statement._outputBuffers[columnIndex];
+    out = (const char*)buff[0].data();
 }
 
 std::string dbc::MySQLResultSet::getString(const int columnIndex) const
@@ -42,15 +46,22 @@ std::string dbc::MySQLResultSet::getString(const int columnIndex) const
 
 int dbc::MySQLResultSet::getInt(const int columnIndex) const
 {
+    std::vector<std::vector<uint8_t> > &buff =_statement._outputBuffers[columnIndex];
 
+    return *((int*)buff[0].data());
 }
 
 double dbc::MySQLResultSet::getDouble(const int columnIndex) const
 {
+    std::vector<std::vector<uint8_t> > &buff =_statement._outputBuffers[columnIndex];
 
+    double *ret = (double*)buff[0].data();
+    return *ret;
 }
 
 bool dbc::MySQLResultSet::getBool(const int columnIndex) const
 {
+    std::vector<std::vector<uint8_t> > &buff =_statement._outputBuffers[columnIndex];
 
+    return *((bool*)buff[0].data());
 }

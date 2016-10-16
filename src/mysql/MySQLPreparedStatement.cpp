@@ -173,13 +173,13 @@ ResultSet::ptr MySQLPreparedStatement::doExecuteQuery()
 
         bind.buffer_length = field->length;
 
-        createBuffer(buffer, sizeof(bind.length));
+        createBuffer(buffer, sizeof(*bind.length));
         bind.length = (unsigned long	*) &buffer.back()[0];;
 
-        createBuffer(buffer, sizeof(bind.error));
+        createBuffer(buffer, sizeof(*bind.error));
         bind.error = (my_bool *) &buffer.back()[0];;
 
-        createBuffer(buffer, sizeof(bind.is_null));
+        createBuffer(buffer, sizeof(*bind.is_null));
         bind.is_null = (my_bool *) &buffer.back()[0];
     }
 

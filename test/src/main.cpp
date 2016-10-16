@@ -14,13 +14,14 @@ public:
         _db.executeUpdate("DROP TABLE IF EXISTS person");
         _db.executeUpdate("CREATE TABLE person ( "
                           "id INTEGER PRIMARY KEY auto_increment, "
-                          "name TEXT NOT NULL, "
-                          "height float NOT NULL DEFAULT 1.80 "
+                          "name VARCHAR(32) NOT NULL, "
+                          "height double NOT NULL DEFAULT 1.80 "
                           ")");
     }
 
     virtual void test() {
         testHappyPath();
+        testResultsetSubscriptOperator();
     }
 
     void testHappyPath()
@@ -125,6 +126,28 @@ public:
                 results->isNull(0));
     }
 
+    void testResultsetSubscriptOperator()
+    {
+        dbc::PreparedStatement::ptr select =
+            _db.prepareStatement("SELECT * FROM person ORDER BY name");
+        dbc::ResultSet::ptr results_ptr = select->executeQuery();
+        dbc::ResultSet& results = *results_ptr;
+
+        results.next();
+
+        Test::assertEqual<int>(
+                "Getting ints by subscript operator works",
+                results[0], 42);
+
+        Test::assertEqual<std::string>(
+                "Getting strings by subscript operator works",
+                results[1], "Douglas");
+
+        Test::assertEqual<double>(
+                "Getting doubles by subscript operator works",
+                results[2], 1.65);
+    }
+
     virtual ~TestDbccppMysql()
     {
         _db.executeUpdate("DROP TABLE IF EXISTS person");
@@ -168,7 +191,7 @@ public:
         testHappyPath();
         // testPreparedStatementOperatorShift();
         testResultsetSubscriptOperator();
-        testInvalidQueries();
+        // testInvalidQueries();
     }
 
     void testHappyPath()
