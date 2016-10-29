@@ -7,11 +7,11 @@ TARGET   = lib/lib$(LIBNAME).a
 # For building with clang++ 3.1 in Ubuntu 12.04, install system clang and
 # add -I/usr/include/clang/3.0/include to compile flags
 
-OPTIMIZE = -O2 # -g -std=c++0x | -std=c++11
+OPTIMIZE = -g -std=c++0x
 COMPILER = clang++ # g++
 
 CXX      = $(COMPILER)
-CXXFLAGS = -pipe $(OPTIMIZE) -fPIC -Wall -Wextra -Werror -D_REENTRANT
+CXXFLAGS = -pipe $(OPTIMIZE) -fPIC -Wall -Wextra -D_REENTRANT
 INCPATH  = -Iinclude
 
 TEST        = dbccpp-test
@@ -21,7 +21,7 @@ TESTINCPATH = $(INCPATH) -I$(TESTCPPDIR)/include
 
 LINK     = $(COMPILER)
 LFLAGS   = -Wl,-O1
-LIBS     = -Llib -l$(LIBNAME) -L$(TESTCPPDIR)/lib -ltestcpp -lsqlite3 
+LIBS     = -Llib -l$(LIBNAME) -L$(TESTCPPDIR)/lib -ltestcpp -lsqlite3 -lmysqlclient
 
 AR       = ar cqs
 
@@ -30,7 +30,8 @@ DEP      = Makefile.dep
 # Generic source file lists
 
 SRC      = $(wildcard src/*.cpp) \
-           $(wildcard src/sqlite/*.cpp)
+					 $(wildcard src/sqlite/*.cpp) \
+					 $(wildcard src/mysql/*.cpp)
 
 OBJS     = $(patsubst src/%.cpp, obj/%.o, $(SRC))
 
@@ -41,6 +42,7 @@ TESTOBJS = $(patsubst test/src/%.cpp, test/obj/%.o, $(TESTSRC))
 
 obj/%.o: src/%.cpp
 	mkdir -p obj/sqlite
+	mkdir -p obj/mysql
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
 
 $(TARGET): $(OBJS)

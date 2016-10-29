@@ -5,19 +5,16 @@
 
 struct sqlite3;
 
-namespace dbc
-{
+namespace dbc {
 
-class SQLiteCountProxy : public CountProxy
-{
+class SQLiteCountProxy : public CountProxy {
 public:
-    SQLiteCountProxy(sqlite3* db) : _db(db) {}
-    virtual operator int() const;
+  SQLiteCountProxy(sqlite3 *db) : _db(db) {}
+  virtual operator int() const;
 
 private:
-    sqlite3* _db;
+  sqlite3 *_db;
 };
-
 }
 
 #endif /* SQLITECOUNTPROXY_H */

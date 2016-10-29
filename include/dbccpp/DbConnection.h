@@ -16,9 +16,8 @@ namespace dbc
  */
 class DbConnection
 {
-    UTILCPP_DECLARE_INTERFACE(DbConnection)
-
 public:
+    virtual ~DbConnection() {};
     /** Creates the singleton instance of the driver-specific database
      * connection.
      *
@@ -26,6 +25,7 @@ public:
      * @param params Parameters for the driver, e.g. file name for SQLite.
      */
     static void connect(const std::string& driver, const std::string& params);
+    static void disconnect();
 
     /** Access the singleton instance of the database connection.
      * The connection instance needs to be created with connect() before this
@@ -37,7 +37,13 @@ public:
     virtual const CountProxy& executeUpdate(const std::string& sql) = 0;
     virtual ResultSet::ptr executeQuery(const std::string& sql) = 0;
 
+protected:
+    DbConnection() {}
 private:
+
+    DbConnection(const DbConnection&);
+    DbConnection& operator=(const DbConnection&);
+
     static std::string _driver;
     static std::string _params;
 };
