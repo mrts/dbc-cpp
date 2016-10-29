@@ -5,26 +5,20 @@
 
 #include <sqlite3.h>
 
-namespace dbc
-{
+namespace dbc {
 
-class SQLiteDbError : public DbError
-{
+class SQLiteDbError : public DbError {
 public:
-    SQLiteDbError(sqlite3* db, const std::string& msg) :
-        DbError(msg, sqlite3_errmsg(db))
-    { }
+  SQLiteDbError(sqlite3 *db, const std::string &msg)
+      : DbError(msg, sqlite3_errmsg(db)) {}
 };
 
-class SQLiteSqlError : public SqlError
-{
+class SQLiteSqlError : public SqlError {
 public:
-    SQLiteSqlError(SQLiteConnection& db,
-            const std::string& msg, const std::string& sql) :
-        SqlError(msg, sqlite3_errmsg(db.handle()), sql)
-    { }
+  SQLiteSqlError(SQLiteConnection &db, const std::string &msg,
+                 const std::string &sql)
+      : SqlError(msg, sqlite3_errmsg(db.handle()), sql) {}
 };
-
 }
 
 #endif /* SQLITEEXCEPTION_H */

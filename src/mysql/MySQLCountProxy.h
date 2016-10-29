@@ -4,19 +4,16 @@
 #include <dbccpp/CountProxy.h>
 #include <mysql/mysql.h>
 
-namespace dbc
-{
+namespace dbc {
 
-class MySQLCountProxy : public CountProxy
-{
+class MySQLCountProxy : public CountProxy {
 public:
-    MySQLCountProxy(MYSQL* db) : _db(db) {}
-    virtual operator int() const;
+  MySQLCountProxy(MYSQL *db) : _db(db) {}
+  virtual operator int() const;
 
 private:
-    MYSQL *_db;
+  MYSQL *_db;
 };
-
 }
 
 #endif /* MYSQLCOUNTPROXY_H__ */
